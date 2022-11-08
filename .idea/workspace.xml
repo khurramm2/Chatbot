@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="cd73e5c0-bca9-4daf-9cf5-c60c2b8561c5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MK.py" beforeDir="false" afterPath="$PROJECT_DIR$/MK.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chatbot.py" beforeDir="false" afterPath="$PROJECT_DIR$/chatbot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Top scorer.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Top scorer.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
