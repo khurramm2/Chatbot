@@ -1,0 +1,114 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.9\" project-jdk-type=\"Python SDK\" />\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 410fbaeb7781bb732d133408b5d757fa462d7634)
++++ b/.idea/misc.xml	(date 1667580964543)
+@@ -1,4 +1,4 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: Isaaq.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Isaaq.py b/Isaaq.py
+new file mode 100644
+--- /dev/null	(date 1667837248939)
++++ b/Isaaq.py	(date 1667837248939)
+@@ -0,0 +1,19 @@
++rules = Rule1 = "No outfield player can use their hands except for goalkeepers. "
++rules = Rule2 = "the opposition must have at least two players ahead of them in order to recieve a pass.  "
++rules = Rule3 = "if the ball goes outside of the white lines then it is either a goal kick, coner kick or throw-in. "
++rules = Rule4 = "if the opposition makes a agressive or unfair challenge they may be presented with a red or yellow card. "
++rules = Rule5 = "the ball has to cross the line fully for it be a goal  "
++rules = [Rule1, Rule2, Rule3, Rule4, Rule5]
++
++print("type 'yes' to read the next rule ")
++
++for rule in rules:
++    while True:
++        answer = input(rule)
++        if answer == 'yes':
++            print("Great!")
++            break
++        else:
++            print("Visit , https://www.theukrules.co.uk/rules/sport/football/top-ten-regulations.html , for a better understanding.")
++
++        
+Index: standings.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/standings.py b/standings.py
+new file mode 100644
+--- /dev/null	(date 1668447793335)
++++ b/standings.py	(date 1668447793335)
+@@ -0,0 +1,38 @@
++
++import requests
++
++url = "https://api-football-beta.p.rapidapi.com/standings"
++
++querystring = {"season":"2019","league":"39"}
++
++headers = {
++	"X-RapidAPI-Key": "b7cf950dddmsh7909c2d31444039p1a7716jsnaed17a1b9be9",
++	"X-RapidAPI-Host": "api-football-beta.p.rapidapi.com"
++}
++
++response = requests.request("GET", url, headers=headers, params=querystring)
++
++print(type(response.json()))
++print(response.json())
++hj = response.json()
++
++
++a = str(hj['response'][0]['league']['standings'][0][0]['team'])
++b = str(hj['response'][0]['league']['standings'][0][0]['form'])
++c=  str(hj['response'][0]['league']['standings'][0][0]['description'])
++q=input("what would you like to know?")
++standings = [a,b,c]
++for standing in standings:
++    while True:
++        if q == 'top':
++            print('team' + a)
++        elif q == 'form':
++            print('form' + b)
++        else:
++            print('Invalid Request')
++
++
++
++
++
++
+Index: .idea/Chatbot.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<module type=\"PYTHON_MODULE\" version=\"4\">\n  <component name=\"NewModuleRootManager\">\n    <content url=\"file://$MODULE_DIR$\" />\n    <orderEntry type=\"inheritedJdk\" />\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\n  </component>\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/Chatbot.iml b/.idea/Chatbot.iml
+--- a/.idea/Chatbot.iml	(revision 410fbaeb7781bb732d133408b5d757fa462d7634)
++++ b/.idea/Chatbot.iml	(date 1667580964468)
+@@ -2,7 +2,7 @@
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+     <content url="file://$MODULE_DIR$" />
+-    <orderEntry type="inheritedJdk" />
++    <orderEntry type="jdk" jdkName="Python 3.11" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+ </module>
+\ No newline at end of file
