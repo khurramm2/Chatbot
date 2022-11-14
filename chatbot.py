@@ -23,9 +23,9 @@ playerid = 0
 goals = df['response'][playerid]['statistics'][0]['goals']['total']
 shot = df['response'][playerid]['statistics'][0]['shots']['total']
 passing = df['response'][playerid]['statistics'][0]['passes']['total']
+passing_accuracy = df['response'][2]['statistics'][0]['passes']['accuracy']
 
 playercode = {'E. Haaland':0, 'H. Kane':1, 'A. Mitrović':2, 'I. Toney':3, 'L. Trossard':4, 'M. Almirón':5, 'P. Foden':6, 'Roberto Firmino':7}
-
 
 def askplayer(name):
     askq = input(
@@ -42,7 +42,8 @@ def askplayer(name):
                 # print(playerid)
                 print(
                     "Ah yes... " + playerchoose + " I know all about him. Did you know in this season he has scored a total of "
-                    + str(goals) + " goals and he's attempted a grande total of " + str(shot) + " shots")
+                    + str(goals) + " goals and he's attempted " + str(shot) + " shots" + " .  Not to mention he has made "
+                + str(passing) + " passes with " + str(passing_accuracy) + "% accuracy")
                 break
 
 
@@ -53,8 +54,5 @@ def askplayer(name):
 
 
 askplayer("name")
-
-
-
 
 
