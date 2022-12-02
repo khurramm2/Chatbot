@@ -1,0 +1,2660 @@
+Index: Mustafa/.ipynb_checkpoints/final chatbot-checkpoint.ipynb
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n \"cells\": [\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 237,\r\n   \"id\": \"8bbedf6a\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"import pandas as pd\\n\",\r\n    \"import nltk\\n\",\r\n    \"import re\\n\",\r\n    \"from nltk.tokenize import word_tokenize\\n\",\r\n    \"from nltk.corpus import stopwords\\n\",\r\n    \"stop_words = set(stopwords.words(\\\"english\\\"))\\n\",\r\n    \"from random import randrange\\n\",\r\n    \"import time\\n\",\r\n    \"from nltk.stem.porter import PorterStemmer\\n\",\r\n    \"import spacy\\n\",\r\n    \"from nltk.stem import WordNetLemmatizer\\n\",\r\n    \"#nltk.download('all')\\n\",\r\n    \"import wordnet\\n\",\r\n    \"nlp = spacy.load('en_core_web_lg',  disable=[\\\"parser\\\", \\\"ner\\\"])\\n\",\r\n    \"import io\\n\",\r\n    \"import random\\n\",\r\n    \"import string \\n\",\r\n    \"import warnings\\n\",\r\n    \"import numpy as np\\n\",\r\n    \"from sklearn.feature_extraction.text import TfidfVectorizer\\n\",\r\n    \"from sklearn.metrics.pairwise import cosine_similarity\\n\",\r\n    \"from nltk import pos_tag\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 20,\r\n   \"id\": \"bf83bcd5\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"import requests\\n\",\r\n    \"\\n\",\r\n    \"url = \\\"https://api-football-beta.p.rapidapi.com/players/topscorers\\\"\\n\",\r\n    \"\\n\",\r\n    \"querystring = {\\\"season\\\":\\\"2022\\\",\\\"league\\\":\\\"39\\\"}\\n\",\r\n    \"\\n\",\r\n    \"headers = {\\n\",\r\n    \"    \\\"X-RapidAPI-Key\\\": \\\"62a02ca5ccmsha68a5acf6c698d9p1ffc12jsnbe2b9a765139\\\",\\n\",\r\n    \"    \\\"X-RapidAPI-Host\\\": \\\"api-football-beta.p.rapidapi.com\\\"\\n\",\r\n    \"}\\n\",\r\n    \"\\n\",\r\n    \"response = requests.request(\\\"GET\\\", url, headers=headers, params=querystring)\\n\",\r\n    \"\\n\",\r\n    \"#print (type(response.json()))\\n\",\r\n    \"#print(response.json())\\n\",\r\n    \"df = response.json()\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 21,\r\n   \"id\": \"da3ad805\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"playerid = 0\\n\",\r\n    \"goals = df['response'][playerid]['statistics'][0]['goals']['total']\\n\",\r\n    \"shot = df['response'][playerid]['statistics'][0]['shots']['total']\\n\",\r\n    \"passing = df['response'][playerid]['statistics'][0]['passes']['total']\\n\",\r\n    \"playercode = {'E. Haaland':0, 'H. Kane':1, 'A. Mitrović':2, 'I. Toney':3, 'L. Trossard':4, 'M. Almirón':5, 'P. Foden':6, 'Roberto Firmino':7}\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"c1ea7939\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 22,\r\n   \"id\": \"0b66aa20\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def askplayer(name):\\n\",\r\n    \"    askq = input(\\\"I know a lot about football, if you want I can tell you about some of the top scorers in the premiere league. So what do you say, Yes or No? \\\")\\n\",\r\n    \"    if askq =='yes' or askq == 'Yes':\\n\",\r\n    \"        print(\\\"Here are the names of some of the top scorers I know, Choose any of those names and I'll tell you all about them\\\")\\n\",\r\n    \"        print(\\\"E. Haaland, H. Kane, A. Mitrović, I. Toney, L. Trossard, M. Almirón, P. Foden, Roberto Firmino\\\")  \\n\",\r\n    \"       #playerchoose = input(\\\"So what's your choice \\\")\\n\",\r\n    \"        while True:\\n\",\r\n    \"            playerchoose = input(\\\"So what's your choice \\\")\\n\",\r\n    \"            if playerchoose in playercode.keys():\\n\",\r\n    \"                playerid = (playercode[playerchoose])\\n\",\r\n    \"                #print(playerid)\\n\",\r\n    \"                print(\\\"hmm...\\\")\\n\",\r\n    \"                time.sleep(1)\\n\",\r\n    \"                print(\\\"Ah yes... \\\" + playerchoose + \\\" I know all about him. Did you know in this season he has scored a total of \\\" \\n\",\r\n    \"                      + str(goals) + \\\" goals and he's attempted a grande total of \\\" + str(shot) +\\\" shots\\\")\\n\",\r\n    \"                break\\n\",\r\n    \"\\n\",\r\n    \"\\n\",\r\n    \"            else:\\n\",\r\n    \"                print(\\\"That's not one of the names I gave you... Try again.\\\")\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 23,\r\n   \"id\": \"7d9de705\",\r\n   \"metadata\": {\r\n    \"scrolled\": true\r\n   },\r\n   \"outputs\": [\r\n    {\r\n     \"name\": \"stdout\",\r\n     \"output_type\": \"stream\",\r\n     \"text\": [\r\n      \"I know a lot about football, if you want I can tell you about some of the top scorers in the premiere league. So what do you say, Yes or No? no\\n\"\r\n     ]\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"askplayer(\\\"name\\\")\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 24,\r\n   \"id\": \"7c74ee47\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"#word2vec = spacy.load(\\\"en_core_web_sm\\\")\\n\",\r\n    \"# if on jupyter notebook open up the anaconda terminal and typeb-m spacy download en_core_web_lg, if it isn't installed\\n\",\r\n    \"#replace spacy.load(\\\"en\\\") with spacy.load(\\\"en_core_web_sm\\\")\\n\",\r\n    \"#nltk.download(\\\"stopwords\\\")\\n\",\r\n    \"#nltk.download('punkt')\\n\",\r\n    \"#python -m spacy download en   ...do this in the conda terminal\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 25,\r\n   \"id\": \"40b467f5\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"response_a = \\\"I've been watching football since I was two\\\"\\n\",\r\n    \"response_b = \\\"I hate Manchester City\\\"\\n\",\r\n    \"response_c = \\\"hello I like wednesdays. John anything today\\\"\\n\",\r\n    \"response_d = \\\"my favorite team is Manchester United\\\"\\n\",\r\n    \"response_e = \\\"I've been watching football since I was two\\\"\\n\",\r\n    \"blank_spot = \\\"player\\\"\\n\",\r\n    \"\\n\",\r\n    \"\\n\",\r\n    \"responses = [response_a, response_b, response_c, response_d, response_e]\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 245,\r\n   \"id\": \"67924d16\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \" def word_tokenization(text):\\n\",\r\n    \"    text = text.lower()\\n\",\r\n    \"    text = re.sub(r'[^\\\\w\\\\s]','',text)\\n\",\r\n    \"    text_tokenized = word_tokenize(text)\\n\",\r\n    \"    \\n\",\r\n    \"    for word in text_tokenized:\\n\",\r\n    \"        if word in stopwords.words('english'):\\n\",\r\n    \"            text_tokenized.remove(word)\\n\",\r\n    \"        \\n\",\r\n    \"    return(text_tokenized)\\n\",\r\n    \"    \\n\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 9,\r\n   \"id\": \"556bccc9\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def wordIn(text):\\n\",\r\n    \"    hjk = list()\\n\",\r\n    \"    for word in text:\\n\",\r\n    \"        if 'NN' in word[1]:\\n\",\r\n    \"            hjk.append(word[0])\\n\",\r\n    \"    return(hjk)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 10,\r\n   \"id\": \"15be9d47\",\r\n   \"metadata\": {\r\n    \"scrolled\": false\r\n   },\r\n   \"outputs\": [\r\n    {\r\n     \"data\": {\r\n      \"text/plain\": [\r\n       \"['hello',\\n\",\r\n       \" 'name',\\n\",\r\n       \" 'john',\\n\",\r\n       \" 'are',\\n\",\r\n       \" 'today',\\n\",\r\n       \" 'there',\\n\",\r\n       \" 'anything',\\n\",\r\n       \" 'like',\\n\",\r\n       \" 'do',\\n\",\r\n       \" 'wednesdays']\"\r\n      ]\r\n     },\r\n     \"execution_count\": 10,\r\n     \"metadata\": {},\r\n     \"output_type\": \"execute_result\"\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"bagofwords(\\\"hello my name is John how are you today is there anything you like to do on Wednesdays \\\")\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"fb2ba8b7\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 244,\r\n   \"id\": \"6334d451\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"speech = [\\\"hello my name is John how are you today is there anything you like to do on Wednesdays\\\"]\\n\",\r\n    \"speech2 = word_tokenization(\\\"hello my name is John how are you today is there anything you like to do on Wednesdays. I do not like  \\\")\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 13,\r\n   \"id\": \"237b2c93\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"d1 = [('hello', 'NN'), ('name', 'NN'), ('john', 'NN'), ('are', 'VBP'), ('today', 'NN'), ('there', 'RB'), ('anything', 'NN'), ('like', 'IN'), ('do', 'VBP'), ('wednesdays', 'NNS'), ('do', 'VB'), ('like', 'IN'), ('wednesdays', 'NNS')]\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"d869ef1e\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"62a49e79\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def speech(text):\\n\",\r\n    \"    qans = input(\\\"Hello my name is Garry, I will be introducing you to the world of football \\\")\\n\",\r\n    \"    exit_command = ['bye','exit,','goodbye']\\n\",\r\n    \"    listintro = [\\\"Do you have anything else that you want to talk about? \\\",\\\"What else do you want to ask?\\\",\\\"Is there anything else?\\\",\\\"What else\\\"]\\n\",\r\n    \"    qans2 = input(listintro[randrange(4)])\\n\",\r\n    \"    for word in exit_command:\\n\",\r\n    \"        if word in qans:\\n\",\r\n    \"            return(\\\"You have chosen to end the chat\\\")\\n\",\r\n    \"    \\n\",\r\n    \"    \\n\",\r\n    \"    if \\\"top scorer\\\" in qans:\\n\",\r\n    \"        askplayer(\\\"example\\\")\\n\",\r\n    \"        if askplayer\\n\",\r\n    \"    \\n\",\r\n    \"    \\n\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"1d7a8480\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 235,\r\n   \"id\": \"a5d28df7\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"sent_tokens = nltk.sent_tokenize(raw)\\n\",\r\n    \"word_tokens = nltk.word_tokenize(raw)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"215afca2\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 252,\r\n   \"id\": \"19f70cff\",\r\n   \"metadata\": {\r\n    \"scrolled\": false\r\n   },\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"tokenized_respone = word_tokenization(resp1)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 254,\r\n   \"id\": \"8b7baa43\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"tagged_response = pos_tag(tokenized_respone)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"edea5f26\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"for word in tagged_response:\\n\",\r\n    \"    \"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"aaf3af2e\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"ace53149\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"4f825a6f\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"209358bd\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"896aa629\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"295261bc\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"712a1ac2\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"93e9fff8\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"94ba033e\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"747cad24\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"6e3b664b\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"my_str = 'Python is the greatest language in the world'\\n\",\r\n    \"def \\n\",\r\n    \"doc = nlp(my_str)\\n\",\r\n    \"words_lemmas_list = [token.lemma_ for token in doc]\\n\",\r\n    \"print(words_lemmas_list)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 15,\r\n   \"id\": \"73256710\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def lemmatizingword(text):\\n\",\r\n    \"    doc = nlp(text)\\n\",\r\n    \"    words_lemmas_list = [token.lemma_ for token in doc]\\n\",\r\n    \"    return(words_lemmas_list)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"bd786819\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 16,\r\n   \"id\": \"7e296657\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"GREETING_INPUTS = (\\\"hello\\\", \\\"hi\\\", \\\"greetings\\\", \\\"sup\\\", \\\"what's up\\\",\\\"hey\\\",)\\n\",\r\n    \"GREETING_RESPONSES = [\\\"hi\\\", \\\"hey\\\", \\\"*nods*\\\", \\\"hi there\\\", \\\"hello\\\", \\\"I am glad! You are talking to me\\\"]\\n\",\r\n    \"def greeting(sentence):\\n\",\r\n    \" \\n\",\r\n    \"    for word in sentence.split():\\n\",\r\n    \"        if word.lower() in GREETING_INPUTS:\\n\",\r\n    \"            return random.choice(GREETING_RESPONSES)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"e5f76a1f\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 17,\r\n   \"id\": \"ab747cef\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def LemTokens(tokens):\\n\",\r\n    \"    return [ lemmatizingword(token) for token in tokens]\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"e8ada467\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 39,\r\n   \"id\": \"cae48468\",\r\n   \"metadata\": {},\r\n   \"outputs\": [\r\n    {\r\n     \"name\": \"stdout\",\r\n     \"output_type\": \"stream\",\r\n     \"text\": [\r\n      \"['Python', 'be', 'the', 'great', 'language', 'in', 'the', 'world']\\n\"\r\n     ]\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"# keeping only tagger component needed for lemmatization\\n\",\r\n    \"my_str = 'Python is the greatest language in the world'\\n\",\r\n    \"\\n\",\r\n    \"doc = nlp(my_str)\\n\",\r\n    \"words_lemmas_list = [token.lemma_ for token in doc]\\n\",\r\n    \"print(words_lemmas_list)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 77,\r\n   \"id\": \"1dcd9154\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def spacypreprocessing(ik):\\n\",\r\n    \"    value = nlp(ik)\\n\",\r\n    \"    return [token.lemma_ for token in value]\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 81,\r\n   \"id\": \"f479bd21\",\r\n   \"metadata\": {},\r\n   \"outputs\": [\r\n    {\r\n     \"data\": {\r\n      \"text/plain\": [\r\n       \"['hello', 'my', 'name', 'is']\"\r\n      ]\r\n     },\r\n     \"execution_count\": 81,\r\n     \"metadata\": {},\r\n     \"output_type\": \"execute_result\"\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"#sent_tokens = nltk.sent_tokenize(responses)\\n\",\r\n    \"#word_tokens = nltk.word_tokenize(raw)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 125,\r\n   \"id\": \"ef69d8d6\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def chatresponse(text):\\n\",\r\n    \"    lower_response = [x.lower() for x in responses]\\n\",\r\n    \"    word_tokenization(text)\\n\",\r\n    \"    tvec = TfidfVectorizer(tokenizer = token.lemma_, stop_words='english')\\n\",\r\n    \"    tfidf = tvec.fit_transform(word_tokenization)\\n\",\r\n    \"    vals = cosine_similarity(tfidf[-1],tvec)\\n\",\r\n    \"    idx=vals.argsort()[0][-2]\\n\",\r\n    \"    flat = vals.flatten()\\n\",\r\n    \"    flat.sort()\\n\",\r\n    \"    req_tfidf = flat[-2]\\n\",\r\n    \"    if(req_tfidf==0):\\n\",\r\n    \"        robo_response=robo_response+\\\"I am sorry! I don't understand you\\\"\\n\",\r\n    \"        return robo_response\\n\",\r\n    \"    else:\\n\",\r\n    \"        robo_response = robo_response+sent_tokens[idx]\\n\",\r\n    \"        return robo_response\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"a8b30ee1\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 219,\r\n   \"id\": \"e35a9d67\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"import nltk\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 221,\r\n   \"id\": \"226f578b\",\r\n   \"metadata\": {},\r\n   \"outputs\": [\r\n    {\r\n     \"name\": \"stdout\",\r\n     \"output_type\": \"stream\",\r\n     \"text\": [\r\n      \"[nltk_data] Downloading package wordnet to\\n\",\r\n      \"[nltk_data]     C:/Users/Mustafa/anaconda3/nltk_data...\\n\"\r\n     ]\r\n    },\r\n    {\r\n     \"data\": {\r\n      \"text/plain\": [\r\n       \"True\"\r\n      ]\r\n     },\r\n     \"execution_count\": 221,\r\n     \"metadata\": {},\r\n     \"output_type\": \"execute_result\"\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"nltk.download(\\\"wordnet\\\",'C:/Users/Mustafa/anaconda3/nltk_data')\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"555d6042\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"d674b540\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 109,\r\n   \"id\": \"3e67b803\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 111,\r\n   \"id\": \"9c46983a\",\r\n   \"metadata\": {},\r\n   \"outputs\": [\r\n    {\r\n     \"data\": {\r\n      \"text/plain\": [\r\n       \"\\\"i like manchester city.\\\\ni hate manchester united.\\\\ni've been watching football since i was two.\\\\n\\\"\"\r\n      ]\r\n     },\r\n     \"execution_count\": 111,\r\n     \"metadata\": {},\r\n     \"output_type\": \"execute_result\"\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"raw\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 112,\r\n   \"id\": \"aca80df5\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 119,\r\n   \"id\": \"67374184\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def spacypreprocessing(ik):\\n\",\r\n    \"    value = nlp(ik)\\n\",\r\n    \"    return [token.lemma_ for token in value]\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 120,\r\n   \"id\": \"98c7a05c\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"GREETING_INPUTS = (\\\"hello\\\", \\\"hi\\\", \\\"greetings\\\", \\\"sup\\\", \\\"what's up\\\",\\\"hey\\\",)\\n\",\r\n    \"GREETING_RESPONSES = [\\\"hi\\\", \\\"hey\\\", \\\"*nods*\\\", \\\"hi there\\\", \\\"hello\\\", \\\"I am glad! You are talking to me\\\"]\\n\",\r\n    \"def greeting(sentence):\\n\",\r\n    \" \\n\",\r\n    \"    for word in sentence.split():\\n\",\r\n    \"        if word.lower() in GREETING_INPUTS:\\n\",\r\n    \"            return random.choice(GREETING_RESPONSES)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 164,\r\n   \"id\": \"c4438d46\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"lemmer = nltk.stem.WordNetLemmatizer()\\n\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 170,\r\n   \"id\": \"e5e37ae2\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"k1=open('responses.txt','r',errors = 'ignore')\\n\",\r\n    \"resp1 =k1.read()\\n\",\r\n    \"resp1 = resp1.lower()# converts to lowercase\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"8b58461c\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"#here's what I need to do. First I need to append the user_input into the corpora and then I need to vectorize it.\\n\",\r\n    \"#after that I need to use cosine similarity on [-1] and the rest of the list\\n\",\r\n    \"#use argsort to select the [0][-2] from the array. this selects the one before the highest matching array\\n\",\r\n    \"#use flatten on the array. then \"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 194,\r\n   \"id\": \"dcfa2f4e\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \" def word_tokenization(text):\\n\",\r\n    \"    text = text.lower()\\n\",\r\n    \"    text = re.sub(r'[^\\\\w\\\\s]','',resp1)\\n\",\r\n    \"    text_tokenized = word_tokenize(resp1)\\n\",\r\n    \"    \\n\",\r\n    \"    for word in text_tokenized:\\n\",\r\n    \"        if word in stopwords.words('english'):\\n\",\r\n    \"            text_tokenized.remove(word)\\n\",\r\n    \"        \\n\",\r\n    \"    return(text_tokenized)\\n\",\r\n    \"    \\n\",\r\n    \"    \\n\",\r\n    \"    \\n\",\r\n    \"def sentence_tokenization(text):\\n\",\r\n    \"    nltk.sent_tokenize(text)\\n\",\r\n    \"    \"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"7f537008\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"1b4ea132\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"b66ba8d4\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"5d4db715\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  }\r\n ],\r\n \"metadata\": {\r\n  \"kernelspec\": {\r\n   \"display_name\": \"Python 3 (ipykernel)\",\r\n   \"language\": \"python\",\r\n   \"name\": \"python3\"\r\n  },\r\n  \"language_info\": {\r\n   \"codemirror_mode\": {\r\n    \"name\": \"ipython\",\r\n    \"version\": 3\r\n   },\r\n   \"file_extension\": \".py\",\r\n   \"mimetype\": \"text/x-python\",\r\n   \"name\": \"python\",\r\n   \"nbconvert_exporter\": \"python\",\r\n   \"pygments_lexer\": \"ipython3\",\r\n   \"version\": \"3.9.12\"\r\n  }\r\n },\r\n \"nbformat\": 4,\r\n \"nbformat_minor\": 5\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Mustafa/.ipynb_checkpoints/final chatbot-checkpoint.ipynb b/Mustafa/.ipynb_checkpoints/final chatbot-checkpoint.ipynb
+--- a/Mustafa/.ipynb_checkpoints/final chatbot-checkpoint.ipynb	(revision 5ce02e9e48688e1f1fccfd13b0c6bc4766886b1b)
++++ b/Mustafa/.ipynb_checkpoints/final chatbot-checkpoint.ipynb	(date 1669193351903)
+@@ -2,9 +2,11 @@
+  "cells": [
+   {
+    "cell_type": "code",
+-   "execution_count": 237,
++   "execution_count": 98,
+    "id": "8bbedf6a",
+-   "metadata": {},
++   "metadata": {
++    "scrolled": true
++   },
+    "outputs": [],
+    "source": [
+     "import pandas as pd\n",
+@@ -28,12 +30,14 @@
+     "import numpy as np\n",
+     "from sklearn.feature_extraction.text import TfidfVectorizer\n",
+     "from sklearn.metrics.pairwise import cosine_similarity\n",
+-    "from nltk import pos_tag"
++    "from nltk import pos_tag\n",
++    "wnl = WordNetLemmatizer()\n",
++    "warnings.filterwarnings('ignore')"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 20,
++   "execution_count": 99,
+    "id": "bf83bcd5",
+    "metadata": {},
+    "outputs": [],
+@@ -58,7 +62,7 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 21,
++   "execution_count": 100,
+    "id": "da3ad805",
+    "metadata": {},
+    "outputs": [],
+@@ -72,15 +76,7 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "c1ea7939",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 22,
++   "execution_count": 101,
+    "id": "0b66aa20",
+    "metadata": {},
+    "outputs": [],
+@@ -100,8 +96,8 @@
+     "                time.sleep(1)\n",
+     "                print(\"Ah yes... \" + playerchoose + \" I know all about him. Did you know in this season he has scored a total of \" \n",
+     "                      + str(goals) + \" goals and he's attempted a grande total of \" + str(shot) +\" shots\")\n",
+-    "                break\n",
+-    "\n",
++    "                return(True)\n",
++    "                exit()\n",
+     "\n",
+     "            else:\n",
+     "                print(\"That's not one of the names I gave you... Try again.\")"
+@@ -109,42 +105,7 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 23,
+-   "id": "7d9de705",
+-   "metadata": {
+-    "scrolled": true
+-   },
+-   "outputs": [
+-    {
+-     "name": "stdout",
+-     "output_type": "stream",
+-     "text": [
+-      "I know a lot about football, if you want I can tell you about some of the top scorers in the premiere league. So what do you say, Yes or No? no\n"
+-     ]
+-    }
+-   ],
+-   "source": [
+-    "askplayer(\"name\")"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 24,
+-   "id": "7c74ee47",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": [
+-    "#word2vec = spacy.load(\"en_core_web_sm\")\n",
+-    "# if on jupyter notebook open up the anaconda terminal and typeb-m spacy download en_core_web_lg, if it isn't installed\n",
+-    "#replace spacy.load(\"en\") with spacy.load(\"en_core_web_sm\")\n",
+-    "#nltk.download(\"stopwords\")\n",
+-    "#nltk.download('punkt')\n",
+-    "#python -m spacy download en   ...do this in the conda terminal"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 25,
++   "execution_count": 102,
+    "id": "40b467f5",
+    "metadata": {},
+    "outputs": [],
+@@ -162,8 +123,26 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 245,
+-   "id": "67924d16",
++   "execution_count": 105,
++   "id": "0abd3c8d",
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "I know a lot about football, if you want I can tell you about some of the top scorers in the premiere league. So what do you say, Yes or No? \n"
++     ]
++    }
++   ],
++   "source": [
++    "askplayer(\"name\")"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 106,
++   "id": "e5093c29",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+@@ -176,637 +155,608 @@
+     "        if word in stopwords.words('english'):\n",
+     "            text_tokenized.remove(word)\n",
+     "        \n",
+-    "    return(text_tokenized)\n",
+-    "    \n"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 9,
+-   "id": "556bccc9",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": [
+-    "def wordIn(text):\n",
+-    "    hjk = list()\n",
+-    "    for word in text:\n",
+-    "        if 'NN' in word[1]:\n",
+-    "            hjk.append(word[0])\n",
+-    "    return(hjk)"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 10,
+-   "id": "15be9d47",
+-   "metadata": {
+-    "scrolled": false
+-   },
+-   "outputs": [
+-    {
+-     "data": {
+-      "text/plain": [
+-       "['hello',\n",
+-       " 'name',\n",
+-       " 'john',\n",
+-       " 'are',\n",
+-       " 'today',\n",
+-       " 'there',\n",
+-       " 'anything',\n",
+-       " 'like',\n",
+-       " 'do',\n",
+-       " 'wednesdays']"
+-      ]
+-     },
+-     "execution_count": 10,
+-     "metadata": {},
+-     "output_type": "execute_result"
+-    }
+-   ],
+-   "source": [
+-    "bagofwords(\"hello my name is John how are you today is there anything you like to do on Wednesdays \")"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "fb2ba8b7",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 244,
+-   "id": "6334d451",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": [
+-    "speech = [\"hello my name is John how are you today is there anything you like to do on Wednesdays\"]\n",
+-    "speech2 = word_tokenization(\"hello my name is John how are you today is there anything you like to do on Wednesdays. I do not like  \")"
++    "    return(text_tokenized)\n"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 13,
+-   "id": "237b2c93",
++   "execution_count": 107,
++   "id": "180fd043",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "d1 = [('hello', 'NN'), ('name', 'NN'), ('john', 'NN'), ('are', 'VBP'), ('today', 'NN'), ('there', 'RB'), ('anything', 'NN'), ('like', 'IN'), ('do', 'VBP'), ('wednesdays', 'NNS'), ('do', 'VB'), ('like', 'IN'), ('wednesdays', 'NNS')]"
++    "k1=open('responses.txt','r',errors = 'ignore')\n",
++    "resp1 =k1.read()\n",
++    "resp1 = resp1.lower()# converts to lowercase"
+    ]
+   },
+   {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "d869ef1e",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "62a49e79",
++   "id": "9b659da4",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "def speech(text):\n",
+-    "    qans = input(\"Hello my name is Garry, I will be introducing you to the world of football \")\n",
+-    "    exit_command = ['bye','exit,','goodbye']\n",
+-    "    listintro = [\"Do you have anything else that you want to talk about? \",\"What else do you want to ask?\",\"Is there anything else?\",\"What else\"]\n",
+-    "    qans2 = input(listintro[randrange(4)])\n",
+-    "    for word in exit_command:\n",
+-    "        if word in qans:\n",
+-    "            return(\"You have chosen to end the chat\")\n",
+-    "    \n",
++    "#don't know if I need this\n",
++    "def lemmatization(text):\n",
++    "    #lemmatized_words = [token.lemma_ for token in nlp(text)]\n",
++    "    text = text.lower()\n",
++    "    text = re.sub(r'[^\\w\\s]','',text)\n",
++    "    lemmatized_words = [token.lemma_ for token in nlp(text)]\n",
++    "\n",
++    "    for word in lemmatized_words:\n",
++    "        if word in stopwords.words('english'):\n",
++    "            lemmatized_words.remove(word)\n",
+     "    \n",
+-    "    if \"top scorer\" in qans:\n",
+-    "        askplayer(\"example\")\n",
+-    "        if askplayer\n",
+-    "    \n",
+-    "    \n"
++    "    return text"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "1d7a8480",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 235,
+-   "id": "a5d28df7",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": [
+-    "sent_tokens = nltk.sent_tokenize(raw)\n",
+-    "word_tokens = nltk.word_tokenize(raw)"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "215afca2",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 252,
+-   "id": "19f70cff",
++   "execution_count": 114,
++   "id": "2ea43d66",
+    "metadata": {
+     "scrolled": false
+    },
+    "outputs": [],
+    "source": [
+-    "tokenized_respone = word_tokenization(resp1)"
++    "tokenized_respone = word_tokenization(resp1)\n",
++    "tagged_response = pos_tag(tokenized_respone)\n",
++    "#lemaitized_response = lemmatization(resp1)"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 254,
+-   "id": "8b7baa43",
++   "execution_count": 122,
++   "id": "96377fe7",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "tagged_response = pos_tag(tokenized_respone)"
++    "def taggandlem(text):\n",
++    "    global lemmatized_list \n",
++    "    global lmt_string\n",
++    "    entity_list = []\n",
++    "    for word in text:\n",
++    "        if 'NN' in word[1]:\n",
++    "            entity_list.append(word[0])\n",
++    "    \n",
++    "    lemmatized_list = []\n",
++    "    for lit in entity_list:\n",
++    "        lmtz = wnl.lemmatize(lit)\n",
++    "        lemmatized_list.append(lmtz)\n",
++    "        lmt_string = ' '.join(lemmatized_list)"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "edea5f26",
++   "execution_count": 125,
++   "id": "08eca349",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "for word in tagged_response:\n",
+-    "    "
++    "taggandlem(tagged_response)"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "aaf3af2e",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "ace53149",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "4f825a6f",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "209358bd",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "896aa629",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "295261bc",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "712a1ac2",
++   "execution_count": 127,
++   "id": "8987d713",
+    "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "93e9fff8",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "['city', 'hate', 'manchester', 'watching', 'football']"
++      ]
++     },
++     "execution_count": 127,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "lemmatized_list"
++   ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "94ba033e",
++   "execution_count": 147,
++   "id": "edd4cf5e",
+    "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "747cad24",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "6e3b664b",
+-   "metadata": {},
+-   "outputs": [],
++   "outputs": [
++    {
++     "ename": "TypeError",
++     "evalue": "__init__() takes 1 positional argument but 2 were given",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
++      "\u001b[1;31mTypeError\u001b[0m                                 Traceback (most recent call last)",
++      "Input \u001b[1;32mIn [147]\u001b[0m, in \u001b[0;36m<cell line: 1>\u001b[1;34m()\u001b[0m\n\u001b[1;32m----> 1\u001b[0m kj \u001b[38;5;241m=\u001b[39m \u001b[43mTfidfVectorizer\u001b[49m\u001b[43m(\u001b[49m\u001b[43mresp1\u001b[49m\u001b[43m)\u001b[49m\n",
++      "\u001b[1;31mTypeError\u001b[0m: __init__() takes 1 positional argument but 2 were given"
++     ]
++    }
++   ],
+    "source": [
+-    "my_str = 'Python is the greatest language in the world'\n",
+-    "def \n",
+-    "doc = nlp(my_str)\n",
+-    "words_lemmas_list = [token.lemma_ for token in doc]\n",
+-    "print(words_lemmas_list)"
++    " kj = TfidfVectorizer(resp1)"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 15,
+-   "id": "73256710",
++   "execution_count": 151,
++   "id": "c812b0f9",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "def lemmatizingword(text):\n",
+-    "    doc = nlp(text)\n",
+-    "    words_lemmas_list = [token.lemma_ for token in doc]\n",
+-    "    return(words_lemmas_list)"
++    "jk = TfidfVectorizer().fit_transform(lemmatized_list)"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "bd786819",
++   "execution_count": 149,
++   "id": "6d0559d2",
+    "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 16,
+-   "id": "7e296657",
+-   "metadata": {},
+-   "outputs": [],
++   "outputs": [
++    {
++     "data": {
++      "text/html": [
++       "<div>\n",
++       "<style scoped>\n",
++       "    .dataframe tbody tr th:only-of-type {\n",
++       "        vertical-align: middle;\n",
++       "    }\n",
++       "\n",
++       "    .dataframe tbody tr th {\n",
++       "        vertical-align: top;\n",
++       "    }\n",
++       "\n",
++       "    .dataframe thead th {\n",
++       "        text-align: right;\n",
++       "    }\n",
++       "</style>\n",
++       "<table border=\"1\" class=\"dataframe\">\n",
++       "  <thead>\n",
++       "    <tr style=\"text-align: right;\">\n",
++       "      <th></th>\n",
++       "      <th>0</th>\n",
++       "    </tr>\n",
++       "  </thead>\n",
++       "  <tbody>\n",
++       "    <tr>\n",
++       "      <th>0</th>\n",
++       "      <td>(0, 0)\\t1.0</td>\n",
++       "    </tr>\n",
++       "  </tbody>\n",
++       "</table>\n",
++       "</div>"
++      ],
++      "text/plain": [
++       "               0\n",
++       "0    (0, 0)\\t1.0"
++      ]
++     },
++     "execution_count": 149,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
+    "source": [
+-    "GREETING_INPUTS = (\"hello\", \"hi\", \"greetings\", \"sup\", \"what's up\",\"hey\",)\n",
+-    "GREETING_RESPONSES = [\"hi\", \"hey\", \"*nods*\", \"hi there\", \"hello\", \"I am glad! You are talking to me\"]\n",
+-    "def greeting(sentence):\n",
+-    " \n",
+-    "    for word in sentence.split():\n",
+-    "        if word.lower() in GREETING_INPUTS:\n",
+-    "            return random.choice(GREETING_RESPONSES)"
++    "pd.DataFrame(jk)"
+    ]
+   },
+   {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "e5f76a1f",
++   "id": "db2ca2e5",
+    "metadata": {},
+    "outputs": [],
+    "source": []
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 17,
+-   "id": "ab747cef",
++   "execution_count": 60,
++   "id": "f6202425",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+     "def LemTokens(tokens):\n",
+-    "    return [ lemmatizingword(token) for token in tokens]"
++    "    return [wnl.lemmatize(token) for token in tokens]\n",
++    "remove_punct_dict = dict((ord(punct), None) for punct in string.punctuation)\n",
++    "\n",
++    "def LemNormalize(text):\n",
++    "    return LemTokens(nltk.word_tokenize(text.lower().translate(remove_punct_dict)))"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "e8ada467",
++   "execution_count": 95,
++   "id": "a496bbaf",
+    "metadata": {},
+    "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 39,
+-   "id": "cae48468",
+-   "metadata": {},
+-   "outputs": [
+-    {
+-     "name": "stdout",
+-     "output_type": "stream",
+-     "text": [
+-      "['Python', 'be', 'the', 'great', 'language', 'in', 'the', 'world']\n"
+-     ]
+-    }
+-   ],
+    "source": [
+-    "# keeping only tagger component needed for lemmatization\n",
+-    "my_str = 'Python is the greatest language in the world'\n",
+-    "\n",
+-    "doc = nlp(my_str)\n",
+-    "words_lemmas_list = [token.lemma_ for token in doc]\n",
+-    "print(words_lemmas_list)"
++    "def reset(variable):\n",
++    "    sent_tokens = nltk.sent_tokenize(resp1)\n",
++    "    word_tokens = nltk.word_tokenize(resp1)\n",
++    "    lmt_string = []"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 77,
+-   "id": "1dcd9154",
++   "execution_count": 142,
++   "id": "ade3f65f",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "def spacypreprocessing(ik):\n",
+-    "    value = nlp(ik)\n",
+-    "    return [token.lemma_ for token in value]"
++    "sent_tokens = nltk.sent_tokenize(resp1)\n",
++    "word_tokens = nltk.word_tokenize(resp1)\n",
++    "lmt_string = []\n",
++    "#may have to reset sent_token every time\n",
++    "\n",
++    "def textresponse(user_response):\n",
++    "    robo_response=''\n",
++    "    tokenized_response = word_tokenization(user_response)\n",
++    "    tagged_response = pos_tag(tokenized_response)\n",
++    "    taggandlem(tagged_response)\n",
++    "    sent_tokens.append(lmt_string)\n",
++    "    TfidfVec = TfidfVectorizer(tokenizer=LemNormalize, stop_words='english')\n",
++    "    tfidf = TfidfVec.fit_transform(sent_tokens)\n",
++    "    vals = cosine_similarity(tfidf[-1], tfidf)\n",
++    "    idx=vals.argsort()[0][-2]\n",
++    "    flat = vals.flatten()\n",
++    "    flat.sort()\n",
++    "    req_tfidf = flat[-2]\n",
++    "    mis_undlist = [\"I am sorry! I don't understand you\",\"I didn't quite get that\",\"I'm sorry can you repeat that\",\"I misunderstood that\",\"I'm sorry what\"]\n",
++    "    if(req_tfidf==0):\n",
++    "        robo_response=robo_response+mis_undlist[randrange(4)]\n",
++    "        return robo_response\n",
++    "    else:\n",
++    "        robo_response = robo_response+sent_tokens[idx]\n",
++    "        print( robo_response)\n",
++    "        "
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 81,
+-   "id": "f479bd21",
++   "execution_count": 143,
++   "id": "5ce81582",
+    "metadata": {},
+    "outputs": [
+     {
+      "data": {
+       "text/plain": [
+-       "['hello', 'my', 'name', 'is']"
++       "\"I am sorry! I don't understand you\""
+       ]
+      },
+-     "execution_count": 81,
++     "execution_count": 143,
+      "metadata": {},
+      "output_type": "execute_result"
+     }
+    ],
+    "source": [
+-    "#sent_tokens = nltk.sent_tokenize(responses)\n",
+-    "#word_tokens = nltk.word_tokenize(raw)"
++    "textresponse(\"hello\")"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 125,
+-   "id": "ef69d8d6",
++   "execution_count": 96,
++   "id": "5ea3321d",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "def chatresponse(text):\n",
+-    "    lower_response = [x.lower() for x in responses]\n",
+-    "    word_tokenization(text)\n",
+-    "    tvec = TfidfVectorizer(tokenizer = token.lemma_, stop_words='english')\n",
+-    "    tfidf = tvec.fit_transform(word_tokenization)\n",
+-    "    vals = cosine_similarity(tfidf[-1],tvec)\n",
+-    "    idx=vals.argsort()[0][-2]\n",
+-    "    flat = vals.flatten()\n",
+-    "    flat.sort()\n",
+-    "    req_tfidf = flat[-2]\n",
+-    "    if(req_tfidf==0):\n",
+-    "        robo_response=robo_response+\"I am sorry! I don't understand you\"\n",
+-    "        return robo_response\n",
+-    "    else:\n",
+-    "        robo_response = robo_response+sent_tokens[idx]\n",
+-    "        return robo_response"
++    "sent_tokens = nltk.sent_tokenize(resp1)\n",
++    "word_tokens = nltk.word_tokenize(resp1)\n",
++    "lmt_string = []\n",
++    "#may have to reset sent_token every time\n",
++    "\n",
++    "def textresponse(user_response):\n",
++    "    robo_response=''\n",
++    "    tokenized_response = word_tokenization(user_response)\n",
++    "    tagged_response = pos_tag(tokenized_response)\n",
++    "    taggandlem(tagged_response)\n",
++    "    sent_tokens.append(lmt_string)\n",
++    "    "
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "a8b30ee1",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 219,
+-   "id": "e35a9d67",
++   "execution_count": 91,
++   "id": "f5e272e0",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "import nltk"
++    "sent_tokens = nltk.sent_tokenize(resp1)\n",
++    "word_tokens = nltk.word_tokenize(resp1)\n",
++    "lmt_string = []\n",
++    "\n",
++    "def test(name):\n",
++    "    name = input(\"name\")\n",
++    "    textresponse(name)"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 221,
+-   "id": "226f578b",
++   "execution_count": 92,
++   "id": "a658b637",
+    "metadata": {},
+    "outputs": [
+     {
+      "name": "stdout",
+      "output_type": "stream",
+      "text": [
+-      "[nltk_data] Downloading package wordnet to\n",
+-      "[nltk_data]     C:/Users/Mustafa/anaconda3/nltk_data...\n"
++      "namehello\n"
+      ]
+-    },
+-    {
+-     "data": {
+-      "text/plain": [
+-       "True"
+-      ]
+-     },
+-     "execution_count": 221,
+-     "metadata": {},
+-     "output_type": "execute_result"
+     }
+    ],
+    "source": [
+-    "nltk.download(\"wordnet\",'C:/Users/Mustafa/anaconda3/nltk_data')"
++    "test(\"city\")"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "555d6042",
++   "execution_count": 86,
++   "id": "f9598770",
+    "metadata": {},
+    "outputs": [],
+-   "source": []
++   "source": [
++    "def speech(text):\n",
++    "    userinput = input(\"Hello my name is Garry, I will be introducing you to the world of football \")\n",
++    "    exit_command = ['bye','exit,','goodbye']\n",
++    "    listintro = [\"Do you have anything else that you want to talk about? \",\"What else do you want to ask?\",\"Is there anything else?\",\"What else\"]\n",
++    "    sent_tokens = nltk.sent_tokenize(resp1)\n",
++    "    word_tokens = nltk.word_tokenize(resp1)\n",
++    "    lmt_string = []\n",
++    "    \n",
++    "    \n",
++    "    \n",
++    "    for word in exit_command:\n",
++    "        if word in userinput:\n",
++    "            return(\"You have chosen to end the chat\")\n",
++    "            exit()\n",
++    "    \n",
++    "    \n",
++    "    if \"top scorer\" in userinput:\n",
++    "        askplayer(\"example\")\n",
++    "        \n",
++    "    \n",
++    "    userinput2 = input(listintro[randrange(4)])\n",
++    "    "
++   ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "d674b540",
++   "execution_count": 67,
++   "id": "6af5d0f0",
+    "metadata": {},
+    "outputs": [],
+-   "source": []
++   "source": [
++    "def speech(text):\n",
++    "    userinput = input(\"Hello my name is Garry, I will be introducing you to the world of football \")\n",
++    "    exit_command = ['bye','exit,','goodbye']\n",
++    "    listintro = [\"Do you have anything else that you want to talk about? \",\"What else do you want to ask?\",\"Is there anything else?\",\"What else\"]\n",
++    "\n",
++    "    if \"top scorer\" in userinput:\n",
++    "        askplayer(\"example\")\n",
++    "        userinput = input(listintro[randrange(4)])\n",
++    "\n",
++    "    \n",
++    "\n",
++    "\n",
++    "\n",
++    "    for word in exit_command:\n",
++    "        if word.lower() in userinput:\n",
++    "            return(\"You have chosen to end the chat\")\n",
++    "\n",
++    "    "
++   ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 109,
+-   "id": "3e67b803",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 111,
+-   "id": "9c46983a",
++   "execution_count": 68,
++   "id": "70960789",
+    "metadata": {},
+    "outputs": [
+     {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "Hello my name is Garry, I will be introducing you to the world of football bye\n"
++     ]
++    },
++    {
+      "data": {
+       "text/plain": [
+-       "\"i like manchester city.\\ni hate manchester united.\\ni've been watching football since i was two.\\n\""
++       "'You have chosen to end the chat'"
+       ]
+      },
+-     "execution_count": 111,
++     "execution_count": 68,
+      "metadata": {},
+      "output_type": "execute_result"
+     }
+    ],
+    "source": [
+-    "raw"
++    "speech(\"hello\")"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 112,
+-   "id": "aca80df5",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 119,
+-   "id": "67374184",
++   "execution_count": 66,
++   "id": "35cb9f1a",
+    "metadata": {},
+-   "outputs": [],
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "Hello my name is Garry, I will be introducing you to the world of football bye\n"
++     ]
++    }
++   ],
+    "source": [
+-    "def spacypreprocessing(ik):\n",
+-    "    value = nlp(ik)\n",
+-    "    return [token.lemma_ for token in value]"
++    "exit_command = ['bye','exit,','goodbye']\n",
++    "\n",
++    "userinput = input(\"Hello my name is Garry, I will be introducing you to the world of football \")\n",
++    "for word in userinput:\n",
++    "    if word in exit_command:\n",
++    "        print(\"goodbye\")"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 120,
+-   "id": "98c7a05c",
++   "execution_count": 33,
++   "id": "5d4db715",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "GREETING_INPUTS = (\"hello\", \"hi\", \"greetings\", \"sup\", \"what's up\",\"hey\",)\n",
+-    "GREETING_RESPONSES = [\"hi\", \"hey\", \"*nods*\", \"hi there\", \"hello\", \"I am glad! You are talking to me\"]\n",
+-    "def greeting(sentence):\n",
+-    " \n",
+-    "    for word in sentence.split():\n",
+-    "        if word.lower() in GREETING_INPUTS:\n",
+-    "            return random.choice(GREETING_RESPONSES)"
++    "#redundant"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 164,
+-   "id": "c4438d46",
++   "execution_count": null,
++   "id": "6ed24ce6",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "lemmer = nltk.stem.WordNetLemmatizer()\n"
++    "flag=True\n",
++    "print(\"ROBO: My name is Robo. I will answer your queries about Chatbots. If you want to exit, type Bye!\")\n",
++    "while(flag==True):\n",
++    "    user_response = input()\n",
++    "    user_response=user_response.lower()\n",
++    "    if(user_response!='bye'):\n",
++    "        if(user_response=='thanks' or user_response=='thank you' ):\n",
++    "            flag=False\n",
++    "            print(\"ROBO: You are welcome..\")\n",
++    "        else:\n",
++    "            if(greeting(user_response)!=None):\n",
++    "                print(\"ROBO: \"+greeting(user_response))\n",
++    "            else:\n",
++    "                print(\"ROBO: \",end=\"\")\n",
++    "                print(response(user_response))\n",
++    "                sent_tokens.remove(user_response)\n",
++    "    else:\n",
++    "        flag=False\n",
++    "        print(\"ROBO: Bye! take care..\")"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 170,
+-   "id": "e5e37ae2",
++   "execution_count": null,
++   "id": "6e4a2565",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "k1=open('responses.txt','r',errors = 'ignore')\n",
+-    "resp1 =k1.read()\n",
+-    "resp1 = resp1.lower()# converts to lowercase"
++    "def lemmatization(text):\n",
++    "    #lemmatized_words = [token.lemma_ for token in nlp(text)]\n",
++    "    text = text.lower()\n",
++    "    text = re.sub(r'[^\\w\\s]','',text)\n",
++    "    lemmatized_words = [token.lemma_ for token in nlp(text)]\n",
++    "\n",
++    "    for word in lemmatized_words:\n",
++    "        if word in stopwords.words('english'):\n",
++    "            lemmatized_words.remove(word)\n",
++    "    \n",
++    "    return text"
+    ]
+   },
+   {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "8b58461c",
++   "id": "685ddddb",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "#here's what I need to do. First I need to append the user_input into the corpora and then I need to vectorize it.\n",
+-    "#after that I need to use cosine similarity on [-1] and the rest of the list\n",
+-    "#use argsort to select the [0][-2] from the array. this selects the one before the highest matching array\n",
+-    "#use flatten on the array. then "
++    "#unfinished\n",
++    "def textresponse(user_response):\n",
++    "    robo_response=''\n",
++    "    sent_tokens.append(user_response)\n",
++    "    tokenized_respone = word_tokenization(user_response)\n",
++    "    tagged_response = pos_tag(tokenized_respone)\n",
++    "    taggandlem(tagged_response)\n",
++    "    "
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 194,
+-   "id": "dcfa2f4e",
++   "execution_count": 112,
++   "id": "9ea232a0",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    " def word_tokenization(text):\n",
+-    "    text = text.lower()\n",
+-    "    text = re.sub(r'[^\\w\\s]','',resp1)\n",
+-    "    text_tokenized = word_tokenize(resp1)\n",
+-    "    \n",
+-    "    for word in text_tokenized:\n",
+-    "        if word in stopwords.words('english'):\n",
+-    "            text_tokenized.remove(word)\n",
+-    "        \n",
+-    "    return(text_tokenized)\n",
+-    "    \n",
+-    "    \n",
+-    "    \n",
+-    "def sentence_tokenization(text):\n",
+-    "    nltk.sent_tokenize(text)\n",
++    "def taggandlem(text):\n",
++    "    entity_list = []\n",
++    "    for word in text:\n",
++    "        if 'NN' in word[1]:\n",
++    "            entity_list.append(word[0])\n",
++    "\n",
++    "    for lit in entity_list:\n",
++    "        print(wnl.lemmatize(lit))\n",
+     "    "
+    ]
+   },
+   {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "7f537008",
++   "id": "5cfbe175",
+    "metadata": {},
+    "outputs": [],
+-   "source": []
++   "source": [
++    "def lemmatization2(entity):\n",
++    "    lemmatized_words = [token.lemma_ for token in nlp(entity)]\n",
++    "    return(lemmatized_words)"
++   ]
+   },
+   {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "1b4ea132",
++   "id": "29f5b609",
+    "metadata": {},
+    "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "b66ba8d4",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
++   "source": [
++    "def textresponse(user_response):\n",
++    "    robo_response=''=\n",
++    "    tokenized_response = word_tokenization(user_response)\n",
++    "    tagged_response = pos_tag(tokenized_response)\n",
++    "    taggandlem(tagged_response)\n",
++    "    sent_tokens.append(lmt_string)\n",
++    "    TfidfVec = TfidfVectorizer(tokenizer=LemNormalize, stop_words='english')\n",
++    "    tfidf = TfidfVec.fit_transform(sent_tokens)\n",
++    "    vals = cosine_similarity(tfidf[-1], tfidf)\n",
++    "    idx=vals.argsort()[0][-2]\n",
++    "    flat = vals.flatten()\n",
++    "    flat.sort()\n",
++    "    req_tfidf = flat[-2]\n",
++    "    mis_undlist = [\"I am sorry! I don't understand you\",\"I didn't quite get that\",\"I'm sorry can you repeat that\",\"I misunderstood that\",\"I'm sorry what\"]\n",
++    "    if(req_tfidf==0):\n",
++    "        robo_response=robo_response+mis_undlist[randrange(4)]\n",
++    "        return robo_response\n",
++    "    else:\n",
++    "        robo_response = robo_response+sent_tokens[idx]\n",
++    "        return robo_response"
++   ]
+   },
+   {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "5d4db715",
++   "id": "debbee27",
+    "metadata": {},
+    "outputs": [],
+-   "source": []
++   "source": [
++    "def speech(text):\n",
++    "    userinput = input(\"Hello my name is Garry, I will be introducing you to the world of football \")\n",
++    "    exit_command = ['bye','exit,','goodbye']\n",
++    "    listintro = [\"Do you have anything else that you want to talk about? \",\"What else do you want to ask?\",\"Is there anything else?\",\"What else\"]\n",
++    "    \n",
++    "    for word in exit_command:\n",
++    "        if word in userinput:\n",
++    "            return(\"You have chosen to end the chat\")\n",
++    "    \n",
++    "    \n",
++    "    if \"top scorer\" in userinput:\n",
++    "        askplayer(\"example\")\n",
++    "        \n",
++    "    \n",
++    "    userinput2 = input(listintro[randrange(4)])\n",
++    "    "
++   ]
+   }
+  ],
+  "metadata": {
+Index: Mustafa/final chatbot.ipynb
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n \"cells\": [\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 266,\r\n   \"id\": \"8bbedf6a\",\r\n   \"metadata\": {\r\n    \"scrolled\": true\r\n   },\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"import pandas as pd\\n\",\r\n    \"import nltk\\n\",\r\n    \"import re\\n\",\r\n    \"from nltk.tokenize import word_tokenize\\n\",\r\n    \"from nltk.corpus import stopwords\\n\",\r\n    \"stop_words = set(stopwords.words(\\\"english\\\"))\\n\",\r\n    \"from random import randrange\\n\",\r\n    \"import time\\n\",\r\n    \"from nltk.stem.porter import PorterStemmer\\n\",\r\n    \"import spacy\\n\",\r\n    \"from nltk.stem import WordNetLemmatizer\\n\",\r\n    \"#nltk.download('all')\\n\",\r\n    \"import wordnet\\n\",\r\n    \"nlp = spacy.load('en_core_web_lg',  disable=[\\\"parser\\\", \\\"ner\\\"])\\n\",\r\n    \"import io\\n\",\r\n    \"import random\\n\",\r\n    \"import string \\n\",\r\n    \"import warnings\\n\",\r\n    \"import numpy as np\\n\",\r\n    \"from sklearn.feature_extraction.text import TfidfVectorizer\\n\",\r\n    \"from sklearn.metrics.pairwise import cosine_similarity\\n\",\r\n    \"from nltk import pos_tag\\n\",\r\n    \"wnl = WordNetLemmatizer()\\n\",\r\n    \"warnings.filterwarnings('ignore')\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 6,\r\n   \"id\": \"bf83bcd5\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"import requests\\n\",\r\n    \"\\n\",\r\n    \"url = \\\"https://api-football-beta.p.rapidapi.com/players/topscorers\\\"\\n\",\r\n    \"\\n\",\r\n    \"querystring = {\\\"season\\\":\\\"2022\\\",\\\"league\\\":\\\"39\\\"}\\n\",\r\n    \"\\n\",\r\n    \"headers = {\\n\",\r\n    \"    \\\"X-RapidAPI-Key\\\": \\\"62a02ca5ccmsha68a5acf6c698d9p1ffc12jsnbe2b9a765139\\\",\\n\",\r\n    \"    \\\"X-RapidAPI-Host\\\": \\\"api-football-beta.p.rapidapi.com\\\"\\n\",\r\n    \"}\\n\",\r\n    \"\\n\",\r\n    \"response = requests.request(\\\"GET\\\", url, headers=headers, params=querystring)\\n\",\r\n    \"\\n\",\r\n    \"#print (type(response.json()))\\n\",\r\n    \"#print(response.json())\\n\",\r\n    \"df = response.json()\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 7,\r\n   \"id\": \"da3ad805\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"playerid = 0\\n\",\r\n    \"goals = df['response'][playerid]['statistics'][0]['goals']['total']\\n\",\r\n    \"shot = df['response'][playerid]['statistics'][0]['shots']['total']\\n\",\r\n    \"passing = df['response'][playerid]['statistics'][0]['passes']['total']\\n\",\r\n    \"playercode = {'E. Haaland':0, 'H. Kane':1, 'A. Mitrović':2, 'I. Toney':3, 'L. Trossard':4, 'M. Almirón':5, 'P. Foden':6, 'Roberto Firmino':7}\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"c1ea7939\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 51,\r\n   \"id\": \"0b66aa20\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def askplayer(name):\\n\",\r\n    \"    askq = input(\\\"I know a lot about football, if you want I can tell you about some of the top scorers in the premiere league. So what do you say, Yes or No? \\\")\\n\",\r\n    \"    if askq =='yes' or askq == 'Yes':\\n\",\r\n    \"        print(\\\"Here are the names of some of the top scorers I know, Choose any of those names and I'll tell you all about them\\\")\\n\",\r\n    \"        print(\\\"E. Haaland, H. Kane, A. Mitrović, I. Toney, L. Trossard, M. Almirón, P. Foden, Roberto Firmino\\\")  \\n\",\r\n    \"       #playerchoose = input(\\\"So what's your choice \\\")\\n\",\r\n    \"        while True:\\n\",\r\n    \"            playerchoose = input(\\\"So what's your choice \\\")\\n\",\r\n    \"            if playerchoose in playercode.keys():\\n\",\r\n    \"                playerid = (playercode[playerchoose])\\n\",\r\n    \"                #print(playerid)\\n\",\r\n    \"                print(\\\"hmm...\\\")\\n\",\r\n    \"                time.sleep(1)\\n\",\r\n    \"                print(\\\"Ah yes... \\\" + playerchoose + \\\" I know all about him. Did you know in this season he has scored a total of \\\" \\n\",\r\n    \"                      + str(goals) + \\\" goals and he's attempted a grande total of \\\" + str(shot) +\\\" shots\\\")\\n\",\r\n    \"                break\\n\",\r\n    \"\\n\",\r\n    \"\\n\",\r\n    \"            else:\\n\",\r\n    \"                print(\\\"That's not one of the names I gave you... Try again.\\\")\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 52,\r\n   \"id\": \"7d9de705\",\r\n   \"metadata\": {\r\n    \"scrolled\": true\r\n   },\r\n   \"outputs\": [\r\n    {\r\n     \"name\": \"stdout\",\r\n     \"output_type\": \"stream\",\r\n     \"text\": [\r\n      \"I know a lot about football, if you want I can tell you about some of the top scorers in the premiere league. So what do you say, Yes or No? yes\\n\",\r\n      \"Here are the names of some of the top scorers I know, Choose any of those names and I'll tell you all about them\\n\",\r\n      \"E. Haaland, H. Kane, A. Mitrović, I. Toney, L. Trossard, M. Almirón, P. Foden, Roberto Firmino\\n\",\r\n      \"So what's your choice E. Haaland\\n\",\r\n      \"hmm...\\n\",\r\n      \"Ah yes... E. Haaland I know all about him. Did you know in this season he has scored a total of 18 goals and he's attempted a grande total of 43 shots\\n\"\r\n     ]\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"askplayer(\\\"name\\\")\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 10,\r\n   \"id\": \"7c74ee47\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"#word2vec = spacy.load(\\\"en_core_web_sm\\\")\\n\",\r\n    \"# if on jupyter notebook open up the anaconda terminal and typeb-m spacy download en_core_web_lg, if it isn't installed\\n\",\r\n    \"#replace spacy.load(\\\"en\\\") with spacy.load(\\\"en_core_web_sm\\\")\\n\",\r\n    \"#nltk.download(\\\"stopwords\\\")\\n\",\r\n    \"#nltk.download('punkt')\\n\",\r\n    \"#python -m spacy download en   ...do this in the conda terminal\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 11,\r\n   \"id\": \"40b467f5\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"response_a = \\\"I've been watching football since I was two\\\"\\n\",\r\n    \"response_b = \\\"I hate Manchester City\\\"\\n\",\r\n    \"response_c = \\\"hello I like wednesdays. John anything today\\\"\\n\",\r\n    \"response_d = \\\"my favorite team is Manchester United\\\"\\n\",\r\n    \"response_e = \\\"I've been watching football since I was two\\\"\\n\",\r\n    \"blank_spot = \\\"player\\\"\\n\",\r\n    \"\\n\",\r\n    \"\\n\",\r\n    \"responses = [response_a, response_b, response_c, response_d, response_e]\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 12,\r\n   \"id\": \"556bccc9\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def wordIn(text):\\n\",\r\n    \"    hjk = list()\\n\",\r\n    \"    for word in text:\\n\",\r\n    \"        if 'NN' in word[1]:\\n\",\r\n    \"            hjk.append(word[0])\\n\",\r\n    \"    return(hjk)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 15,\r\n   \"id\": \"62a49e79\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def speech(text):\\n\",\r\n    \"    qans = input(\\\"Hello my name is Garry, I will be introducing you to the world of football \\\")\\n\",\r\n    \"    exit_command = ['bye','exit,','goodbye']\\n\",\r\n    \"    listintro = [\\\"Do you have anything else that you want to talk about? \\\",\\\"What else do you want to ask?\\\",\\\"Is there anything else?\\\",\\\"What else\\\"]\\n\",\r\n    \"    qans2 = input(listintro[randrange(4)])\\n\",\r\n    \"    for word in exit_command:\\n\",\r\n    \"        if word in qans:\\n\",\r\n    \"            return(\\\"You have chosen to end the chat\\\")\\n\",\r\n    \"    \\n\",\r\n    \"    \\n\",\r\n    \"    if \\\"top scorer\\\" in qans:\\n\",\r\n    \"        askplayer(\\\"example\\\")\\n\",\r\n    \"    \\n\",\r\n    \"    \\n\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 18,\r\n   \"id\": \"e5093c29\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \" def word_tokenization(text):\\n\",\r\n    \"    text = text.lower()\\n\",\r\n    \"    text = re.sub(r'[^\\\\w\\\\s]','',text)\\n\",\r\n    \"    text_tokenized = word_tokenize(text)\\n\",\r\n    \"    \\n\",\r\n    \"    for word in text_tokenized:\\n\",\r\n    \"        if word in stopwords.words('english'):\\n\",\r\n    \"            text_tokenized.remove(word)\\n\",\r\n    \"        \\n\",\r\n    \"    return(text_tokenized)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 19,\r\n   \"id\": \"180fd043\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"k1=open('responses.txt','r',errors = 'ignore')\\n\",\r\n    \"resp1 =k1.read()\\n\",\r\n    \"resp1 = resp1.lower()# converts to lowercase\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 186,\r\n   \"id\": \"2ea43d66\",\r\n   \"metadata\": {\r\n    \"scrolled\": false\r\n   },\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"tokenized_respone = word_tokenization(resp1)\\n\",\r\n    \"tagged_response = pos_tag(tokenized_respone)\\n\",\r\n    \"lemaitized_response = lemmatization(resp1)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 22,\r\n   \"id\": \"71b1168b\",\r\n   \"metadata\": {},\r\n   \"outputs\": [\r\n    {\r\n     \"data\": {\r\n      \"text/plain\": [\r\n       \"['city', 'hate', 'manchester', 'watching', 'football']\"\r\n      ]\r\n     },\r\n     \"execution_count\": 22,\r\n     \"metadata\": {},\r\n     \"output_type\": \"execute_result\"\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"entity_list = []\\n\",\r\n    \"for word in tagged_response:\\n\",\r\n    \"    if 'NN' in word[1]:\\n\",\r\n    \"        entity_list.append(word[0])\\n\",\r\n    \"        \\n\",\r\n    \"entity_list\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 24,\r\n   \"id\": \"cd050456\",\r\n   \"metadata\": {},\r\n   \"outputs\": [\r\n    {\r\n     \"name\": \"stdout\",\r\n     \"output_type\": \"stream\",\r\n     \"text\": [\r\n      \"city\\n\",\r\n      \"hate\\n\",\r\n      \"manchester\\n\",\r\n      \"watching\\n\",\r\n      \"football\\n\"\r\n     ]\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"for word in entity_list:\\n\",\r\n    \"    print(wnl.lemmatize(word))\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 233,\r\n   \"id\": \"96377fe7\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def taggandlem(text):\\n\",\r\n    \"    global lemmatized_list \\n\",\r\n    \"    global lmt_string\\n\",\r\n    \"    entity_list = []\\n\",\r\n    \"    for word in text:\\n\",\r\n    \"        if 'NN' in word[1]:\\n\",\r\n    \"            entity_list.append(word[0])\\n\",\r\n    \"    \\n\",\r\n    \"    lemmatized_list = []\\n\",\r\n    \"    for lit in entity_list:\\n\",\r\n    \"        lmtz = wnl.lemmatize(lit)\\n\",\r\n    \"        lemmatized_list.append(lmtz)\\n\",\r\n    \"        lmt_string = ' '.join(lemmatized_list)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 234,\r\n   \"id\": \"c12f4f84\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"taggandlem(tagged_response)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 226,\r\n   \"id\": \"bf888c58\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"#here's what I need to do. First I need to append the user_input into the corpora and then I need to vectorize it.\\n\",\r\n    \"#after that I need to use cosine similarity on [-1] and the rest of the list\\n\",\r\n    \"#use argsort to select the [0][-2] from the array. this selects the one before the highest matching array\\n\",\r\n    \"#use flatten on the array. then \"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 260,\r\n   \"id\": \"f6202425\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def LemTokens(tokens):\\n\",\r\n    \"    return [wnl.lemmatize(token) for token in tokens]\\n\",\r\n    \"remove_punct_dict = dict((ord(punct), None) for punct in string.punctuation)\\n\",\r\n    \"\\n\",\r\n    \"def LemNormalize(text):\\n\",\r\n    \"    return LemTokens(nltk.word_tokenize(text.lower().translate(remove_punct_dict)))\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 227,\r\n   \"id\": \"02bfb92c\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"sent_tokens = nltk.sent_tokenize(resp1)\\n\",\r\n    \"word_tokens = nltk.word_tokenize(resp1)\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 308,\r\n   \"id\": \"ade3f65f\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"sent_tokens = nltk.sent_tokenize(resp1)\\n\",\r\n    \"word_tokens = nltk.word_tokenize(resp1)\\n\",\r\n    \"\\n\",\r\n    \"#may have to reset sent_token every time\\n\",\r\n    \"\\n\",\r\n    \"def textresponse(user_response):\\n\",\r\n    \"    robo_response=''\\n\",\r\n    \"    tokenized_response = word_tokenization(user_response)\\n\",\r\n    \"    tagged_response = pos_tag(tokenized_response)\\n\",\r\n    \"    taggandlem(tagged_response)\\n\",\r\n    \"    sent_tokens.append(lmt_string)\\n\",\r\n    \"    TfidfVec = TfidfVectorizer(tokenizer=LemNormalize, stop_words='english')\\n\",\r\n    \"    tfidf = TfidfVec.fit_transform(sent_tokens)\\n\",\r\n    \"    vals = cosine_similarity(tfidf[-1], tfidf)\\n\",\r\n    \"    idx=vals.argsort()[0][-2]\\n\",\r\n    \"    flat = vals.flatten()\\n\",\r\n    \"    flat.sort()\\n\",\r\n    \"    req_tfidf = flat[-2]\\n\",\r\n    \"    mis_undlist = [\\\"I am sorry! I don't understand you\\\",\\\"I didn't quite get that\\\",\\\"I'm sorry can you repeat that\\\",\\\"I misunderstood that\\\",\\\"I'm sorry what\\\"]\\n\",\r\n    \"    if(req_tfidf==0):\\n\",\r\n    \"        robo_response=robo_response+mis_undlist[randrange(4)]\\n\",\r\n    \"        return robo_response\\n\",\r\n    \"    else:\\n\",\r\n    \"        robo_response = robo_response+sent_tokens[idx]\\n\",\r\n    \"        return robo_response\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 309,\r\n   \"id\": \"5423cdae\",\r\n   \"metadata\": {},\r\n   \"outputs\": [\r\n    {\r\n     \"data\": {\r\n      \"text/plain\": [\r\n       \"\\\"I am sorry! I don't understand you\\\"\"\r\n      ]\r\n     },\r\n     \"execution_count\": 309,\r\n     \"metadata\": {},\r\n     \"output_type\": \"execute_result\"\r\n    }\r\n   ],\r\n   \"source\": [\r\n    \"textresponse(\\\"asdouiifis bafd dasd\\\")\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"e6262c21\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"e3db3395\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"1d70d3f1\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 288,\r\n   \"id\": \"f018674e\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def response(user_response):\\n\",\r\n    \"    robo_response=''\\n\",\r\n    \"    sent_tokens.append(user_response)\\n\",\r\n    \"    TfidfVec = TfidfVectorizer(tokenizer=LemNormalize, stop_words='english')\\n\",\r\n    \"    tfidf = TfidfVec.fit_transform(sent_tokens)\\n\",\r\n    \"    vals = cosine_similarity(tfidf[-1], tfidf)\\n\",\r\n    \"    idx=vals.argsort()[0][-2]\\n\",\r\n    \"    flat = vals.flatten()\\n\",\r\n    \"    flat.sort()\\n\",\r\n    \"    req_tfidf = flat[-2]\\n\",\r\n    \"    if(req_tfidf==0):\\n\",\r\n    \"        robo_response=robo_response+\\\"I am sorry! I don't understand you\\\"\\n\",\r\n    \"        return robo_response\\n\",\r\n    \"    else:\\n\",\r\n    \"        robo_response = robo_response+sent_tokens[idx]\\n\",\r\n    \"        return robo_response\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"96a069b0\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"6ed24ce6\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 33,\r\n   \"id\": \"5d4db715\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"#redundant\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"6e4a2565\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def lemmatization(text):\\n\",\r\n    \"    #lemmatized_words = [token.lemma_ for token in nlp(text)]\\n\",\r\n    \"    text = text.lower()\\n\",\r\n    \"    text = re.sub(r'[^\\\\w\\\\s]','',text)\\n\",\r\n    \"    lemmatized_words = [token.lemma_ for token in nlp(text)]\\n\",\r\n    \"\\n\",\r\n    \"    for word in lemmatized_words:\\n\",\r\n    \"        if word in stopwords.words('english'):\\n\",\r\n    \"            lemmatized_words.remove(word)\\n\",\r\n    \"    \\n\",\r\n    \"    return text\"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"61670b23\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": []\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"685ddddb\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"#unfinished\\n\",\r\n    \"def textresponse(user_response):\\n\",\r\n    \"    robo_response=''\\n\",\r\n    \"    sent_tokens.append(user_response)\\n\",\r\n    \"    tokenized_respone = word_tokenization(user_response)\\n\",\r\n    \"    tagged_response = pos_tag(tokenized_respone)\\n\",\r\n    \"    taggandlem(tagged_response)\\n\",\r\n    \"    \"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": 112,\r\n   \"id\": \"9ea232a0\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def taggandlem(text):\\n\",\r\n    \"    entity_list = []\\n\",\r\n    \"    for word in text:\\n\",\r\n    \"        if 'NN' in word[1]:\\n\",\r\n    \"            entity_list.append(word[0])\\n\",\r\n    \"\\n\",\r\n    \"    for lit in entity_list:\\n\",\r\n    \"        print(wnl.lemmatize(lit))\\n\",\r\n    \"    \"\r\n   ]\r\n  },\r\n  {\r\n   \"cell_type\": \"code\",\r\n   \"execution_count\": null,\r\n   \"id\": \"5cfbe175\",\r\n   \"metadata\": {},\r\n   \"outputs\": [],\r\n   \"source\": [\r\n    \"def lemmatization2(entity):\\n\",\r\n    \"    lemmatized_words = [token.lemma_ for token in nlp(entity)]\\n\",\r\n    \"    return(lemmatized_words)\"\r\n   ]\r\n  }\r\n ],\r\n \"metadata\": {\r\n  \"kernelspec\": {\r\n   \"display_name\": \"Python 3 (ipykernel)\",\r\n   \"language\": \"python\",\r\n   \"name\": \"python3\"\r\n  },\r\n  \"language_info\": {\r\n   \"codemirror_mode\": {\r\n    \"name\": \"ipython\",\r\n    \"version\": 3\r\n   },\r\n   \"file_extension\": \".py\",\r\n   \"mimetype\": \"text/x-python\",\r\n   \"name\": \"python\",\r\n   \"nbconvert_exporter\": \"python\",\r\n   \"pygments_lexer\": \"ipython3\",\r\n   \"version\": \"3.9.13\"\r\n  }\r\n },\r\n \"nbformat\": 4,\r\n \"nbformat_minor\": 5\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Mustafa/final chatbot.ipynb b/Mustafa/final chatbot.ipynb
+--- a/Mustafa/final chatbot.ipynb	(revision 5ce02e9e48688e1f1fccfd13b0c6bc4766886b1b)
++++ b/Mustafa/final chatbot.ipynb	(date 1669193351903)
+@@ -2,12 +2,22 @@
+  "cells": [
+   {
+    "cell_type": "code",
+-   "execution_count": 266,
++   "execution_count": 3,
+    "id": "8bbedf6a",
+    "metadata": {
+     "scrolled": true
+    },
+-   "outputs": [],
++   "outputs": [
++    {
++     "name": "stderr",
++     "output_type": "stream",
++     "text": [
++      "C:\\Users\\Mustafa\\anaconda3\\lib\\site-packages\\scipy\\__init__.py:146: UserWarning: A NumPy version >=1.16.5 and <1.23.0 is required for this version of SciPy (detected version 1.23.4\n",
++      "  warnings.warn(f\"A NumPy version >={np_minversion} and <{np_maxversion}\"\n",
++      "Warming up PyWSD (takes ~10 secs)... took 4.703453540802002 secs.\n"
++     ]
++    }
++   ],
+    "source": [
+     "import pandas as pd\n",
+     "import nltk\n",
+@@ -32,12 +42,13 @@
+     "from sklearn.metrics.pairwise import cosine_similarity\n",
+     "from nltk import pos_tag\n",
+     "wnl = WordNetLemmatizer()\n",
+-    "warnings.filterwarnings('ignore')"
++    "warnings.filterwarnings('ignore')\n",
++    "from pywsd.utils import lemmatize_sentence"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 6,
++   "execution_count": 5,
+    "id": "bf83bcd5",
+    "metadata": {},
+    "outputs": [],
+@@ -62,7 +73,7 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 7,
++   "execution_count": 6,
+    "id": "da3ad805",
+    "metadata": {},
+    "outputs": [],
+@@ -76,15 +87,7 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": null,
+-   "id": "c1ea7939",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 51,
++   "execution_count": 7,
+    "id": "0b66aa20",
+    "metadata": {},
+    "outputs": [],
+@@ -104,8 +107,8 @@
+     "                time.sleep(1)\n",
+     "                print(\"Ah yes... \" + playerchoose + \" I know all about him. Did you know in this season he has scored a total of \" \n",
+     "                      + str(goals) + \" goals and he's attempted a grande total of \" + str(shot) +\" shots\")\n",
+-    "                break\n",
+-    "\n",
++    "                return(True)\n",
++    "                exit()\n",
+     "\n",
+     "            else:\n",
+     "                print(\"That's not one of the names I gave you... Try again.\")"
+@@ -113,47 +116,7 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 52,
+-   "id": "7d9de705",
+-   "metadata": {
+-    "scrolled": true
+-   },
+-   "outputs": [
+-    {
+-     "name": "stdout",
+-     "output_type": "stream",
+-     "text": [
+-      "I know a lot about football, if you want I can tell you about some of the top scorers in the premiere league. So what do you say, Yes or No? yes\n",
+-      "Here are the names of some of the top scorers I know, Choose any of those names and I'll tell you all about them\n",
+-      "E. Haaland, H. Kane, A. Mitrović, I. Toney, L. Trossard, M. Almirón, P. Foden, Roberto Firmino\n",
+-      "So what's your choice E. Haaland\n",
+-      "hmm...\n",
+-      "Ah yes... E. Haaland I know all about him. Did you know in this season he has scored a total of 18 goals and he's attempted a grande total of 43 shots\n"
+-     ]
+-    }
+-   ],
+-   "source": [
+-    "askplayer(\"name\")"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 10,
+-   "id": "7c74ee47",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": [
+-    "#word2vec = spacy.load(\"en_core_web_sm\")\n",
+-    "# if on jupyter notebook open up the anaconda terminal and typeb-m spacy download en_core_web_lg, if it isn't installed\n",
+-    "#replace spacy.load(\"en\") with spacy.load(\"en_core_web_sm\")\n",
+-    "#nltk.download(\"stopwords\")\n",
+-    "#nltk.download('punkt')\n",
+-    "#python -m spacy download en   ...do this in the conda terminal"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 11,
++   "execution_count": 8,
+    "id": "40b467f5",
+    "metadata": {},
+    "outputs": [],
+@@ -171,45 +134,25 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 12,
+-   "id": "556bccc9",
++   "execution_count": 9,
++   "id": "b98c51b0",
+    "metadata": {},
+-   "outputs": [],
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "I know a lot about football, if you want I can tell you about some of the top scorers in the premiere league. So what do you say, Yes or No? \n"
++     ]
++    }
++   ],
+    "source": [
+-    "def wordIn(text):\n",
+-    "    hjk = list()\n",
+-    "    for word in text:\n",
+-    "        if 'NN' in word[1]:\n",
+-    "            hjk.append(word[0])\n",
+-    "    return(hjk)"
++    "askplayer(\"name\")"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 15,
+-   "id": "62a49e79",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": [
+-    "def speech(text):\n",
+-    "    qans = input(\"Hello my name is Garry, I will be introducing you to the world of football \")\n",
+-    "    exit_command = ['bye','exit,','goodbye']\n",
+-    "    listintro = [\"Do you have anything else that you want to talk about? \",\"What else do you want to ask?\",\"Is there anything else?\",\"What else\"]\n",
+-    "    qans2 = input(listintro[randrange(4)])\n",
+-    "    for word in exit_command:\n",
+-    "        if word in qans:\n",
+-    "            return(\"You have chosen to end the chat\")\n",
+-    "    \n",
+-    "    \n",
+-    "    if \"top scorer\" in qans:\n",
+-    "        askplayer(\"example\")\n",
+-    "    \n",
+-    "    \n"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 18,
++   "execution_count": 10,
+    "id": "e5093c29",
+    "metadata": {},
+    "outputs": [],
+@@ -223,12 +166,12 @@
+     "        if word in stopwords.words('english'):\n",
+     "            text_tokenized.remove(word)\n",
+     "        \n",
+-    "    return(text_tokenized)"
++    "    return(text_tokenized)\n"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 19,
++   "execution_count": 11,
+    "id": "180fd043",
+    "metadata": {},
+    "outputs": [],
+@@ -240,84 +183,99 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 186,
+-   "id": "2ea43d66",
+-   "metadata": {
+-    "scrolled": false
+-   },
++   "execution_count": 12,
++   "id": "65804430",
++   "metadata": {},
+    "outputs": [],
+    "source": [
+-    "tokenized_respone = word_tokenization(resp1)\n",
+-    "tagged_response = pos_tag(tokenized_respone)\n",
+-    "lemaitized_response = lemmatization(resp1)"
++    "#don't know if I need this\n",
++    "def lemmatization(text):\n",
++    "    #lemmatized_words = [token.lemma_ for token in nlp(text)]\n",
++    "    text = text.lower()\n",
++    "    text = re.sub(r'[^\\w\\s]','',text)\n",
++    "    lemmatized_words = [token.lemma_ for token in nlp(text)]\n",
++    "\n",
++    "    for word in lemmatized_words:\n",
++    "        if word in stopwords.words('english'):\n",
++    "            lemmatized_words.remove(word)\n",
++    "    \n",
++    "    return text"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 22,
+-   "id": "71b1168b",
++   "execution_count": 13,
++   "id": "d0781d70",
+    "metadata": {},
+-   "outputs": [
+-    {
+-     "data": {
+-      "text/plain": [
+-       "['city', 'hate', 'manchester', 'watching', 'football']"
+-      ]
+-     },
+-     "execution_count": 22,
+-     "metadata": {},
+-     "output_type": "execute_result"
+-    }
+-   ],
++   "outputs": [],
+    "source": [
+-    "entity_list = []\n",
+-    "for word in tagged_response:\n",
+-    "    if 'NN' in word[1]:\n",
+-    "        entity_list.append(word[0])\n",
+-    "        \n",
+-    "entity_list"
++    "def taggandlem(text):\n",
++    "    global lemmatized_list \n",
++    "    global lmt_string\n",
++    "    entity_list = []\n",
++    "    for word in text:\n",
++    "        if 'NN' in word[1]:\n",
++    "            entity_list.append(word[0])\n",
++    "    \n",
++    "    lemmatized_list = []\n",
++    "    for lit in entity_list:\n",
++    "        lmtz = wnl.lemmatize(lit)\n",
++    "        lemmatized_list.append(lmtz)\n",
++    "        lmt_string = ' '.join(lemmatized_list)"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 24,
+-   "id": "cd050456",
++   "execution_count": 14,
++   "id": "a02efc20",
+    "metadata": {},
+    "outputs": [
+     {
+-     "name": "stdout",
+-     "output_type": "stream",
+-     "text": [
+-      "city\n",
+-      "hate\n",
+-      "manchester\n",
+-      "watching\n",
+-      "football\n"
+-     ]
++     "data": {
++      "text/plain": [
++       "'hello my name is'"
++      ]
++     },
++     "execution_count": 14,
++     "metadata": {},
++     "output_type": "execute_result"
+     }
+    ],
+    "source": [
+-    "for word in entity_list:\n",
+-    "    print(wnl.lemmatize(word))"
++    "WordNetLemmatizer().lemmatize(\"hello my name is\")"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 233,
++   "execution_count": 15,
++   "id": "2ea43d66",
++   "metadata": {
++    "scrolled": false
++   },
++   "outputs": [],
++   "source": [
++    "tokenized_respone = word_tokenization(resp1)\n",
++    "tagged_response = pos_tag(tokenized_respone)\n",
++    "lemaitized_response = lemmatization(resp1)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 16,
+    "id": "96377fe7",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "def taggandlem(text):\n",
++    "def lem(text):\n",
+     "    global lemmatized_list \n",
+     "    global lmt_string\n",
+     "    entity_list = []\n",
+-    "    for word in text:\n",
+-    "        if 'NN' in word[1]:\n",
+-    "            entity_list.append(word[0])\n",
++    "  #  for word in text:\n",
++    "   #     if 'NN' in word[1]:\n",
++    "    #        entity_list.append(word[0])\n",
+     "    \n",
+     "    lemmatized_list = []\n",
+-    "    for lit in entity_list:\n",
++    "    for lit in text:\n",
+     "        lmtz = wnl.lemmatize(lit)\n",
+     "        lemmatized_list.append(lmtz)\n",
+     "        lmt_string = ' '.join(lemmatized_list)"
+@@ -325,30 +283,126 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 234,
+-   "id": "c12f4f84",
++   "execution_count": null,
++   "id": "43ad340c",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 17,
++   "id": "10fb29f2",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "sent_tokens = nltk.sent_tokenize(resp1)\n",
++    "word_tokens = nltk.word_tokenize(resp1)\n",
++    "lmt_string = []"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 18,
++   "id": "04b429b8",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "taggandlem(tagged_response)"
++    "sent_tokens = nltk.sent_tokenize(resp1)\n",
++    "word_tokens = nltk.word_tokenize(resp1)\n",
++    "lmt_string = []\n",
++    "lmt_corp =  nltk.sent_tokenize(lemmatization(resp1))\n",
++    "#may have to reset sent_token every time\n",
++    "\n",
++    "def textresponse(user_response):\n",
++    "    robo_response=''\n",
++    "    tokenized_response = word_tokenization(user_response)\n",
++    "    tagged_response = pos_tag(tokenized_response)\n",
++    "    taggandlem(tagged_response)\n",
++    "    sent_tokens.append(lmt_string)\n",
++    "    \n",
++    "    "
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 226,
+-   "id": "bf888c58",
++   "execution_count": null,
++   "id": "360a8631",
+    "metadata": {},
+    "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 19,
++   "id": "01cd3b55",
++   "metadata": {
++    "scrolled": true
++   },
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "['i like manchester city.',\n",
++       " 'i hate manchester united.',\n",
++       " \"i've been watching football since i was two.\",\n",
++       " 'catci cars cat running dogs']"
++      ]
++     },
++     "execution_count": 19,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
+    "source": [
+-    "#here's what I need to do. First I need to append the user_input into the corpora and then I need to vectorize it.\n",
+-    "#after that I need to use cosine similarity on [-1] and the rest of the list\n",
+-    "#use argsort to select the [0][-2] from the array. this selects the one before the highest matching array\n",
+-    "#use flatten on the array. then "
++    "sent_tokens"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 260,
++   "execution_count": 20,
++   "id": "e92c1ce3",
++   "metadata": {},
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "'i like manchester city\\ni hate manchester united\\nive been watching football since i was two\\ncatci cars cat running dogs\\n'"
++      ]
++     },
++     "execution_count": 20,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "lemmatization(resp1)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 21,
++   "id": "593f2db8",
++   "metadata": {},
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "['i like manchester city\\ni hate manchester united\\nive been watching football since i was two\\ncatci cars cat running dogs']"
++      ]
++     },
++     "execution_count": 21,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "lmt_corp"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 22,
+    "id": "f6202425",
+    "metadata": {},
+    "outputs": [],
+@@ -363,25 +417,26 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 227,
+-   "id": "02bfb92c",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": [
+-    "sent_tokens = nltk.sent_tokenize(resp1)\n",
+-    "word_tokens = nltk.word_tokenize(resp1)"
+-   ]
+-  },
+-  {
+-   "cell_type": "code",
+-   "execution_count": 308,
++   "execution_count": 2,
+    "id": "ade3f65f",
+    "metadata": {},
+-   "outputs": [],
++   "outputs": [
++    {
++     "ename": "NameError",
++     "evalue": "name 'nltk' is not defined",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
++      "\u001b[1;31mNameError\u001b[0m                                 Traceback (most recent call last)",
++      "Input \u001b[1;32mIn [2]\u001b[0m, in \u001b[0;36m<cell line: 1>\u001b[1;34m()\u001b[0m\n\u001b[1;32m----> 1\u001b[0m sent_tokens \u001b[38;5;241m=\u001b[39m \u001b[43mnltk\u001b[49m\u001b[38;5;241m.\u001b[39msent_tokenize(resp1)\n\u001b[0;32m      2\u001b[0m word_tokens \u001b[38;5;241m=\u001b[39m nltk\u001b[38;5;241m.\u001b[39mword_tokenize(resp1)\n\u001b[0;32m      3\u001b[0m lmt_string \u001b[38;5;241m=\u001b[39m []\n",
++      "\u001b[1;31mNameError\u001b[0m: name 'nltk' is not defined"
++     ]
++    }
++   ],
+    "source": [
+     "sent_tokens = nltk.sent_tokenize(resp1)\n",
+     "word_tokens = nltk.word_tokenize(resp1)\n",
+-    "\n",
++    "lmt_string = []\n",
+     "#may have to reset sent_token every time\n",
+     "\n",
+     "def textresponse(user_response):\n",
+@@ -403,83 +458,494 @@
+     "        return robo_response\n",
+     "    else:\n",
+     "        robo_response = robo_response+sent_tokens[idx]\n",
+-    "        return robo_response"
++    "        print( robo_response)\n",
++    "        "
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 24,
++   "id": "db57c27d",
++   "metadata": {},
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "'I misunderstood that'"
++      ]
++     },
++     "execution_count": 24,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "textresponse(\"hello\")"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 25,
++   "id": "6719eb32",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def speech(text):\n",
++    "    userinput = input(\"Hello my name is Garry, I will be introducing you to the world of football \")\n",
++    "    exit_command = ['bye','exit,','goodbye']\n",
++    "    listintro = [\"Do you have anything else that you want to talk about? \",\"What else do you want to ask?\",\"Is there anything else?\",\"What else\"]\n",
++    "    sent_tokens = nltk.sent_tokenize(resp1)\n",
++    "    word_tokens = nltk.word_tokenize(resp1)\n",
++    "    lmt_string = []\n",
++    "    \n",
++    "    \n",
++    "    \n",
++    "    for word in exit_command:\n",
++    "        if word in userinput:\n",
++    "            return(\"You have chosen to end the chat\")\n",
++    "            exit()\n",
++    "    \n",
++    "    \n",
++    "    if \"top scorer\" in userinput:\n",
++    "        askplayer(\"example\")\n",
++    "        \n",
++    "    \n",
++    "    userinput2 = input(listintro[randrange(4)])\n",
++    "    "
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 26,
++   "id": "2f6c1178",
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "Hello my name is Garry, I will be introducing you to the world of football \n",
++      "What else\n"
++     ]
++    }
++   ],
++   "source": [
++    "speech(\"hello\")"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 27,
++   "id": "ec95708e",
++   "metadata": {
++    "scrolled": true
++   },
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "Hello my name is Garry, I will be introducing you to the world of football \n"
++     ]
++    }
++   ],
++   "source": [
++    "exit_command = ['bye','exit,','goodbye']\n",
++    "\n",
++    "userinput = input(\"Hello my name is Garry, I will be introducing you to the world of football \")\n",
++    "for word in userinput:\n",
++    "    if word in exit_command:\n",
++    "        print(\"goodbye\")"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 28,
++   "id": "9d1dcfbf",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def frequency_of_terms(user_input,responses_option):\n",
++    "    frequency = 0\n",
++    "    for word in user_input:\n",
++    "        if word.lower() in responses_option:\n",
++    "            frequency +=1\n",
++    "    return frequency\n",
++    "    "
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 29,
++   "id": "4bf1b740",
++   "metadata": {},
++   "outputs": [
++    {
++     "ename": "NameError",
++     "evalue": "name 'elist' is not defined",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
++      "\u001b[1;31mNameError\u001b[0m                                 Traceback (most recent call last)",
++      "Input \u001b[1;32mIn [29]\u001b[0m, in \u001b[0;36m<cell line: 1>\u001b[1;34m()\u001b[0m\n\u001b[1;32m----> 1\u001b[0m frequency_of_terms(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mhello my name\u001b[39m\u001b[38;5;124m\"\u001b[39m,\u001b[43melist\u001b[49m[\u001b[38;5;241m3\u001b[39m])\n",
++      "\u001b[1;31mNameError\u001b[0m: name 'elist' is not defined"
++     ]
++    }
++   ],
++   "source": [
++    "frequency_of_terms(\"hello my name\",elist[3])"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 30,
++   "id": "c6015641",
++   "metadata": {},
++   "outputs": [
++    {
++     "ename": "NameError",
++     "evalue": "name 'frequency_of_terms2' is not defined",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
++      "\u001b[1;31mNameError\u001b[0m                                 Traceback (most recent call last)",
++      "Input \u001b[1;32mIn [30]\u001b[0m, in \u001b[0;36m<cell line: 1>\u001b[1;34m()\u001b[0m\n\u001b[1;32m----> 1\u001b[0m \u001b[43mfrequency_of_terms2\u001b[49m(\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mcity\u001b[39m\u001b[38;5;124m\"\u001b[39m,elist[\u001b[38;5;241m2\u001b[39m])\n",
++      "\u001b[1;31mNameError\u001b[0m: name 'frequency_of_terms2' is not defined"
++     ]
++    }
++   ],
++   "source": [
++    "frequency_of_terms2(\"city\",elist[2])"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 31,
++   "id": "d747b8ad",
++   "metadata": {},
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "\"i like manchester city.\\ni hate manchester united.\\ni've been watching football since i was two.\\ncatci cars cat running dogs\\n\""
++      ]
++     },
++     "execution_count": 31,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "resp1"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 32,
++   "id": "7c575c24",
++   "metadata": {},
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "['i like manchester city.',\n",
++       " 'i hate manchester united.',\n",
++       " \"i've been watching football since i was two.\",\n",
++       " 'catci cars cat running dogs',\n",
++       " 'hello']"
++      ]
++     },
++     "execution_count": 32,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "sent_tokens"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 309,
+-   "id": "5423cdae",
++   "execution_count": 33,
++   "id": "460c5637",
+    "metadata": {},
+    "outputs": [
++    {
++     "ename": "SyntaxError",
++     "evalue": "invalid syntax (3733349992.py, line 7)",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[1;36m  Input \u001b[1;32mIn [33]\u001b[1;36m\u001b[0m\n\u001b[1;33m    if responses_option[:]\u001b[0m\n\u001b[1;37m                          ^\u001b[0m\n\u001b[1;31mSyntaxError\u001b[0m\u001b[1;31m:\u001b[0m invalid syntax\n"
++     ]
++    }
++   ],
++   "source": [
++    "def frequency_of_terms(user_input,responses_option):\n",
++    "    frequency = 0\n",
++    "    user_input = user_input.split()\n",
++    "    for word in user_input:\n",
++    "        for item in responses_option[n] :\n",
++    "            if word in item:\n",
++    "                if responses_option[:]\n",
++    "    print(frequency)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 34,
++   "id": "74b50882",
++   "metadata": {
++    "scrolled": true
++   },
++   "outputs": [
+     {
+      "data": {
+       "text/plain": [
+-       "\"I am sorry! I don't understand you\""
++       "0"
+       ]
+      },
+-     "execution_count": 309,
++     "execution_count": 34,
+      "metadata": {},
+      "output_type": "execute_result"
+     }
+    ],
+    "source": [
+-    "textresponse(\"asdouiifis bafd dasd\")"
++    "frequency_of_terms(\"cat and dogs\",sent_tokens)"
+    ]
+   },
+   {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "e6262c21",
++   "id": "7461e3c9",
+    "metadata": {},
+    "outputs": [],
+    "source": []
+   },
+   {
++   "cell_type": "code",
++   "execution_count": 35,
++   "id": "b2c3aebc",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def recursion(text):\n",
++    " #  text = int(text)\n",
++    "    if text<6:\n",
++    "        print(\"your number is \" + str(text))\n",
++    "        recursion(text+1)\n",
++    "    else:\n",
++    "        print(\"noo\")"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 1,
++   "id": "6365200c",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def frequency_of_terms(user_input,response_option):\n",
++    "    global freqhash\n",
++    "    frequency = 0\n",
++    "    freqhash = []\n",
++    "    n=0\n",
++    "    user_input = user_input.split()\n",
++    "    for word in user_input:\n",
++    "        for item in response_option:\n",
++    "            if word in item:\n",
++    "                frequency +=1\n",
++    "                #if response_option[n] <= response_option[3]:\n",
++    "                 #   n=n+1\n",
++    "            freqhash.append(frequency)\n",
++    "    print(frequency)\n"
++   ]
++  },
++  {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "e3db3395",
++   "id": "f4f2d7af",
+    "metadata": {},
+    "outputs": [],
+    "source": []
+   },
+   {
++   "cell_type": "code",
++   "execution_count": 37,
++   "id": "f2b38415",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def frequency_of_terms(user_input,responses_option):\n",
++    "    n=0\n",
++    "    global freqhash\n",
++    "    frequency = 0\n",
++    "    freqhash = []\n",
++    "    user_input = user_input.split()\n",
++    "    #while responses_option[n]\n",
++    "    for word in user_input:\n",
++    "        if word in responses_option[n]:\n",
++    "            frequency +=1\n",
++    "    print(frequency)\n",
++    "    freqhash.append(frequency)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 38,
++   "id": "14441392",
++   "metadata": {
++    "scrolled": true
++   },
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "0\n"
++     ]
++    }
++   ],
++   "source": [
++    "frequency_of_terms(\"cat and dogs\",sent_tokens)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 39,
++   "id": "9803d60d",
++   "metadata": {
++    "scrolled": true
++   },
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "5"
++      ]
++     },
++     "execution_count": 39,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "len(sent_tokens)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 40,
++   "id": "8a7a6f68",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "bg = np.array(freqhash)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 41,
++   "id": "7a0491fe",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def frequency_of_terms(user_input,response_option):\n",
++    "    global freqhash\n",
++    "    frequency = 0\n",
++    "    freqhash = []\n",
++    "    n=0\n",
++    "    user_input = user_input.split()\n",
++    "    for word in user_input:\n",
++    "        for item in response_option[3]:\n",
++    "            if word in item:\n",
++    "                frequency +=1\n",
++    "                #if response_option[n] <= response_option[3]:\n",
++    "                 #   n=n+1\n",
++    "            freqhash.append(frequency)\n",
++    "    print(frequency)\n"
++   ]
++  },
++  {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "1d70d3f1",
++   "id": "d238f2d2",
+    "metadata": {},
+    "outputs": [],
+    "source": []
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 288,
+-   "id": "f018674e",
++   "execution_count": 45,
++   "id": "2efa4ef4",
+    "metadata": {},
+    "outputs": [],
+    "source": [
+-    "def response(user_response):\n",
+-    "    robo_response=''\n",
+-    "    sent_tokens.append(user_response)\n",
+-    "    TfidfVec = TfidfVectorizer(tokenizer=LemNormalize, stop_words='english')\n",
+-    "    tfidf = TfidfVec.fit_transform(sent_tokens)\n",
+-    "    vals = cosine_similarity(tfidf[-1], tfidf)\n",
+-    "    idx=vals.argsort()[0][-2]\n",
+-    "    flat = vals.flatten()\n",
+-    "    flat.sort()\n",
+-    "    req_tfidf = flat[-2]\n",
+-    "    if(req_tfidf==0):\n",
+-    "        robo_response=robo_response+\"I am sorry! I don't understand you\"\n",
+-    "        return robo_response\n",
+-    "    else:\n",
+-    "        robo_response = robo_response+sent_tokens[idx]\n",
+-    "        return robo_response"
++    "def frequency_of_terms(user_input,responses_option,n):\n",
++    "    global freqhash\n",
++    "    frequency = 0\n",
++    "    freqhash = []\n",
++    "    \n",
++    " #   user_input = user_input.split()\n",
++    "    for word in user_input:\n",
++    "        if word in responses_option:\n",
++    "            frequency +=1\n",
++    "            \n",
++    "   # if n<3\n",
++    "    frequency_of_terms(user_input,responses_option,(1))\n",
++    "            \n",
++    "            \n",
++    "    print(frequency)\n",
++    "    freqhash.append(frequency)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "fe2ed0cf",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "frequency_of_terms(\"cat and dog\",sent_tokens,0)"
+    ]
+   },
+   {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "96a069b0",
++   "id": "b373767a",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "bdbd0db7",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "\n"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "9248cd22",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "2c9061bd",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "28d61793",
+    "metadata": {},
+    "outputs": [],
+    "source": []
+@@ -487,7 +953,284 @@
+   {
+    "cell_type": "code",
+    "execution_count": null,
+-   "id": "6ed24ce6",
++   "id": "a2b8f4a7",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "1d1730e3",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def frequency_of_terms(user_input,responses_option):\n",
++    "    global freqhash\n",
++    "    frequency = 0\n",
++    "    freqhash = []\n",
++    "    n=0\n",
++    "    user_input = user_input.split()\n",
++    "    for word in user_input:\n",
++    "        if word in responses_option:\n",
++    "            frequency +=1\n",
++    "            n=n+1\n",
++    "            \n",
++    "            \n",
++    "            \n",
++    "            \n",
++    "    print(frequency)\n",
++    "    freqhash.append(frequency)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "6ade121f",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "2bc6ebd9",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "09c08559",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "874a6161",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 809,
++   "id": "2156e6f1",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def frequency_of_terms(user_input,responses_option):\n",
++    "    global freqhash\n",
++    "    frequency = 0\n",
++    "    freqhash = []\n",
++    "    n=0\n",
++    "    user_input = user_input.split()\n",
++    "    for word in user_input:\n",
++    "        for item in responses_option:\n",
++    "            if word in item[n]:\n",
++    "                frequency +=1\n",
++    "                n=n+1\n",
++    "    \n",
++    "    #while n<3:\n",
++    "     #   frequency_of_terms(user_input,responses_option)\n",
++    "        \n",
++    "    print(frequency)\n",
++    "    freqhash.append(frequency)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 807,
++   "id": "ddda7335",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def frequency_of_terms(user_input,responses_option):\n",
++    "    global freqhash\n",
++    "    frequency = 0\n",
++    "    freqhash = []\n",
++    "    n=0\n",
++    "    user_input = user_input.split()\n",
++    "    for word in user_input:\n",
++    "        for item in responses_option:\n",
++    "            if word in item[n]:\n",
++    "                frequency +=1\n",
++    "                n=n+1\n",
++    "    \n",
++    "   # while n<3:\n",
++    "    #    frequency_of_terms(user_input,responses_option)\n",
++    "        \n",
++    "    print(frequency)\n",
++    "    freqhash.append(frequency)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 817,
++   "id": "451394eb",
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "2\n"
++     ]
++    }
++   ],
++   "source": [
++    "frequency_of_terms(\"cat and dog\",sent_tokens[3])"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 1,
++   "id": "fcfc8f0c",
++   "metadata": {},
++   "outputs": [
++    {
++     "ename": "NameError",
++     "evalue": "name 'sent_tokens' is not defined",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
++      "\u001b[1;31mNameError\u001b[0m                                 Traceback (most recent call last)",
++      "Input \u001b[1;32mIn [1]\u001b[0m, in \u001b[0;36m<cell line: 1>\u001b[1;34m()\u001b[0m\n\u001b[1;32m----> 1\u001b[0m \u001b[43msent_tokens\u001b[49m\n\u001b[0;32m      2\u001b[0m \u001b[38;5;28;01mfor\u001b[39;00m word \u001b[38;5;129;01min\u001b[39;00m sent_tokens:\n\u001b[0;32m      3\u001b[0m     \u001b[38;5;28mprint\u001b[39m(word)\n",
++      "\u001b[1;31mNameError\u001b[0m: name 'sent_tokens' is not defined"
++     ]
++    }
++   ],
++   "source": [
++    "sent_tokens\n",
++    "for word in sent_tokens:\n",
++    "    print(word)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 663,
++   "id": "550c398c",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "l2 = [\"num\",\"da\",\"yas\",\"okoko\"]"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "514802fb",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "n= 0\n",
++    "while l2[n] < l2[-1]"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "a44df937",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "d4a1a07f",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def frequency_of_terms(user_input,response_option):\n",
++    "    global freqhash\n",
++    "    frequency = 0\n",
++    "    freqhash = []\n",
++    "    n=0\n",
++    "    user_input = user_input.split()\n",
++    "    for word in user_input:\n",
++    "        for item in response_option:\n",
++    "            if response_option[n] <response_option[3]:\n",
++    "                frequency +=1\n",
++    "                if response_option[n] <= response_option[-1]:\n",
++    "                    n=n+1\n",
++    "    print(frequency)\n",
++    "    freqhash.append(frequency)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "fd90c283",
++   "metadata": {},
++   "outputs": [],
++   "source": []
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 356,
++   "id": "d82f7412",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "elist = []\n",
++    "for word in sent_tokens:\n",
++    "    elist.append(lemmatize_sentence(word,))"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 773,
++   "id": "b7d2d6f8",
++   "metadata": {},
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "[['i', 'like', 'manchester', 'city', '.'],\n",
++       " ['i', 'hate', 'manchester', 'unite', '.'],\n",
++       " ['i', \"'ve\", 'be', 'watch', 'football', 'since', 'i', 'be', 'two', '.'],\n",
++       " ['catci', 'car', 'cat', 'run', 'dog']]"
++      ]
++     },
++     "execution_count": 773,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "elist"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 776,
++   "id": "5dfdbda9",
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "like\n",
++      "hate\n",
++      "'ve\n",
++      "car\n"
++     ]
++    }
++   ],
++   "source": [
++    "for item in elist:\n",
++    "    print(item[1])"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "24e29b1d",
+    "metadata": {},
+    "outputs": [],
+    "source": []
+@@ -503,6 +1246,34 @@
+    ]
+   },
+   {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "6ed24ce6",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "flag=True\n",
++    "print(\"ROBO: My name is Robo. I will answer your queries about Chatbots. If you want to exit, type Bye!\")\n",
++    "while(flag==True):\n",
++    "    user_response = input()\n",
++    "    user_response=user_response.lower()\n",
++    "    if(user_response!='bye'):\n",
++    "        if(user_response=='thanks' or user_response=='thank you' ):\n",
++    "            flag=False\n",
++    "            print(\"ROBO: You are welcome..\")\n",
++    "        else:\n",
++    "            if(greeting(user_response)!=None):\n",
++    "                print(\"ROBO: \"+greeting(user_response))\n",
++    "            else:\n",
++    "                print(\"ROBO: \",end=\"\")\n",
++    "                print(response(user_response))\n",
++    "                sent_tokens.remove(user_response)\n",
++    "    else:\n",
++    "        flag=False\n",
++    "        print(\"ROBO: Bye! take care..\")"
++   ]
++  },
++  {
+    "cell_type": "code",
+    "execution_count": null,
+    "id": "6e4a2565",
+@@ -523,14 +1294,6 @@
+    ]
+   },
+   {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "id": "61670b23",
+-   "metadata": {},
+-   "outputs": [],
+-   "source": []
+-  },
+-  {
+    "cell_type": "code",
+    "execution_count": null,
+    "id": "685ddddb",
+@@ -576,6 +1339,65 @@
+     "    lemmatized_words = [token.lemma_ for token in nlp(entity)]\n",
+     "    return(lemmatized_words)"
+    ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "321cd6f4",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "sent_tokens = nltk.sent_tokenize(resp1)\n",
++    "word_tokens = nltk.word_tokenize(resp1)\n",
++    "lmt_string = []\n",
++    "\n",
++    "\n",
++    "def textresponse(user_response):\n",
++    "    robo_response=''=\n",
++    "    tokenized_response = word_tokenization(user_response)\n",
++    "    tagged_response = pos_tag(tokenized_response)\n",
++    "    taggandlem(tagged_response)\n",
++    "    sent_tokens.append(lmt_string)\n",
++    "    TfidfVec = TfidfVectorizer(tokenizer=LemNormalize, stop_words='english')\n",
++    "    tfidf = TfidfVec.fit_transform(sent_tokens)\n",
++    "    vals = cosine_similarity(tfidf[-1], tfidf)\n",
++    "    idx=vals.argsort()[0][-2]\n",
++    "    flat = vals.flatten()\n",
++    "    flat.sort()\n",
++    "    req_tfidf = flat[-2]\n",
++    "    mis_undlist = [\"I am sorry! I don't understand you\",\"I didn't quite get that\",\"I'm sorry can you repeat that\",\"I misunderstood that\",\"I'm sorry what\"]\n",
++    "    if(req_tfidf==0):\n",
++    "        robo_response=robo_response+mis_undlist[randrange(4)]\n",
++    "        return robo_response\n",
++    "    else:\n",
++    "        robo_response = robo_response+sent_tokens[idx]\n",
++    "        return robo_response"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": null,
++   "id": "fb274b46",
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "def speech(text):\n",
++    "    userinput = input(\"Hello my name is Garry, I will be introducing you to the world of football \")\n",
++    "    exit_command = ['bye','exit,','goodbye']\n",
++    "    listintro = [\"Do you have anything else that you want to talk about? \",\"What else do you want to ask?\",\"Is there anything else?\",\"What else\"]\n",
++    "    \n",
++    "    for word in exit_command:\n",
++    "        if word in userinput:\n",
++    "            return(\"You have chosen to end the chat\")\n",
++    "    \n",
++    "    \n",
++    "    if \"top scorer\" in userinput:\n",
++    "        askplayer(\"example\")\n",
++    "        \n",
++    "    \n",
++    "    userinput2 = input(listintro[randrange(4)])\n",
++    "    "
++   ]
+   }
+  ],
+  "metadata": {
+@@ -594,7 +1416,7 @@
+    "name": "python",
+    "nbconvert_exporter": "python",
+    "pygments_lexer": "ipython3",
+-   "version": "3.9.13"
++   "version": "3.9.12"
+   }
+  },
+  "nbformat": 4,
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"cd73e5c0-bca9-4daf-9cf5-c60c2b8561c5\" name=\"Changes\" comment=\"\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_14_11_2022__5_43_pm__Changes_.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_14_11_2022__5_43_pm__Changes_.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/Mustafa/football chatbot new.ipynb\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Mustafa/football chatbot new.ipynb\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2H5g9D9UNC71xK1TJPWnfdmEbJK\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/Mustafa/Projects/MIND-CRAFT-main/user_functions.py&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RunManager\" selected=\"Python.tesr\">\r\n    <configuration name=\"chat_app\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"Chatbot\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$USER_HOME$/Projects/MIND-CRAFT-main\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$USER_HOME$/Projects/MIND-CRAFT-main/chat_app.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"chatbot\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"Chatbot\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/chatbot.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"tesr\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"Chatbot\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/tesr.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Python.tesr\" />\r\n        <item itemvalue=\"Python.chat_app\" />\r\n        <item itemvalue=\"Python.chatbot\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"cd73e5c0-bca9-4daf-9cf5-c60c2b8561c5\" name=\"Changes\" comment=\"\" />\r\n      <created>1667580205082</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1667580205082</updated>\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 5ce02e9e48688e1f1fccfd13b0c6bc4766886b1b)
++++ b/.idea/workspace.xml	(date 1669193425814)
+@@ -2,9 +2,8 @@
+ <project version="4">
+   <component name="ChangeListManager">
+     <list default="true" id="cd73e5c0-bca9-4daf-9cf5-c60c2b8561c5" name="Changes" comment="">
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_14_11_2022__5_43_pm__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_14_11_2022__5_43_pm__Changes_.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Mustafa/football chatbot new.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Mustafa/football chatbot new.ipynb" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Mustafa/.ipynb_checkpoints/final chatbot-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Mustafa/.ipynb_checkpoints/final chatbot-checkpoint.ipynb" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Mustafa/final chatbot.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Mustafa/final chatbot.ipynb" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
